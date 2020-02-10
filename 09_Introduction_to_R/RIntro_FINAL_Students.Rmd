@@ -1,0 +1,25 @@
+---
+title: "Introducción a R (I)"
+author: "Javier Moreno"
+output:
+  pdf_document: 
+    toc: true
+    toc_depth: 5
+  html_document: 
+    toc: true
+    toc_depth: 5
+---
+
+#Primeros pasos con R Markdown
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Obtener inforamción acerca de la sesión
+```{r}
+sessionInfo()
+```

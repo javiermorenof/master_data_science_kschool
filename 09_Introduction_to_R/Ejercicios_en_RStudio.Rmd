@@ -1,0 +1,53 @@
+---
+title: "Ejercicios_Introduccion_R"
+author: "Javier_Moreno"
+date: "10/2/2020"
+output: html_document
+---
+
+# Ejercicio 1. La baraja de Tute
+## Crea una baraja de Tute mediante un `data.frame`
+
+```{r}
+baraja <- data.frame("carta"=rep(c(1:7,10:12),times=4),
+                     "palo"= rep(c("Oros","Copas","Bastos","Espadas"), each=10),
+                     "puntos"= rep(c(11,0,10,0,0,0,0,7,8,9),times=4),
+                     stringsAsFactors = FALSE)
+baraja
+```
+```{r}
+str(baraja)
+```
+
+## Crea una función que sea barajar el mazo
+
+```{r}
+shuffle <- function(){
+  #Dento de la baraja cojo 40 muestras (el total de la baraja), pero a nivel de filas, de ahí la coma(,).
+  #No indico reemplazo en sample porque no lo busco
+  baraja_sh <- baraja[sample(40),]
+  return(baraja_sh)
+}
+
+baraja_sh <- shuffle()
+baraja_sh[1]
+```
+
+## Crea una función que baraje el mazo y reparta la primera carta
+
+```{r}
+shuffle_and_deal <- function(){
+  baraja_sh <- baraja[sample(1:40, size=40),]
+  return(baraja_sh[1,])
+}
+
+shuffle_and_deal()
+```
+
+
+
+
+
+
+
+

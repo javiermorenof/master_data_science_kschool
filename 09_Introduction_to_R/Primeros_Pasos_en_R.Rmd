@@ -1,0 +1,652 @@
+---
+title: "Primeros_pasos_R"
+author: "Javier_Moreno"
+date: "10/2/2020"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Primeros pasos en R
+## Cómo crear documentos en R
+
+Para crear un primer documento en R, es necesario seleccionar cuál va a ser el *Working Directory*.
+Esto se puede hacer en la barra superior en `Session > Set Working Directory` o a través de:
+
+```{r}
+setwd("C:/Users/Jota_Moreno/Downloads")
+```
+
+Para saber el *Working Directory* en el que se encuentra actualmente, se utiliza el comando:
+
+```{r}
+getwd()
+```
+
+## Creación del primer documento en R
+Una vez que se ha seleccionado *Working Directory* se puede crear un nuevo documento de trabajo. En RStudio se puede trabajar con diferentes tipos de documento. Se puede crear en el símbolo '+' de la barra superior y en'New File'.
+
+Es común trabajar con *R Script* y *R Markdown*
+
+## Información de la sesión
+La distribución básica de R cuenta con varios paquetes: *stats, graphics, grDevices, utils, datasets, methods y base*. Se pueden ver todos de diferentes maneras:
+
+- En la ventana inferior derecha, en la opción ***Packages***, donde se pueden cargar paquetes instalados.
+
+- Mediante el comando:
+
+```{r}
+sessionInfo()
+```
+
+## Instalación de paquetes de CRAN en RStudio
+Se pueden instalar paquetes en RStudio de diferentes maneras:
+
+- En la barra superior en **Tools > Install Packages**
+
+- A través del comando `install.packages("paquete")`
+
+Una vez se ha isntalado el paquete, debe cargarse o bien en el panel inferior derecho o bien mediante:
+```{r}
+library(tidyverse)
+```
+
+## Variables del entorno
+Se pueden ver todas las variables existentes en el entorno en el cuadro superior de la derecha o mediante el comando:
+```{r}
+ls()
+```
+
+## Ayuda
+Se puede obtener ayuda en cualquier momento de cualquier comando poniendo una '?' delante:
+
+```{r}
+? matrix
+```
+
+O bien en la ventana inferior izquierda buscando en la pestaña `help`.
+
+## Tipos de objetos en R.
+
+En R encontramos:
+
+### 1. Vectores
+
+En los vectores, todos los objetos deben ser del mismo tipo. Se pueden crear vectores de diferentes maneras:
+```{r}
+dado <- 1:6
+dado
+```
+
+```{r}
+moneda <- c(1,2)
+moneda
+```
+
+Se puede saber su longitud mediante:
+
+```{r}
+length(dado)
+```
+
+O que es un vector mediante:
+
+```{r}
+is.vector(dado)
+```
+
+Las operaciones con vectores se realizan elemento a elemento y si hay un vector más corto que otro, R repetirá el vector corto tantas veces como necesite para ser del mismo tamaño que el largo. Esto se conoce como ***vector recycling***. Por ejemplo:
+
+```{r}
+dado + moneda
+```
+
+Se pueden hacer operaciones matriciales con vectores:
+
+- **Multiplicación matricial** 
+```{r}
+dado %*% dado
+```
+- ***Outer multplication***:
+```{r}
+dado %o% dado
+```
+
+**IMPORTANTE**: En R, a diferencia de Python, el indexado comienza a partir de 1, no a partir de 0.
+
+```{r}
+dado[1]
+```
+
+### Tipos de vectores:
+Se distinguen seis tipos de vectores atómicos. Se puede ver su tipo mediante:
+```{r}
+typeof(dado)
+```
+
+Sus seis tipos son:
+
+- **Integer & Doubles**. Almacena cualquier tipo de número. El término double hace referencia al número de bits necesarios para guardar esos números en la RAM. Mediante 'L' se puede forzar que sean *integers*.
+```{r}
+double <- c(1,5,-7)
+typeof(double)
+```
+```{r}
+int <- c(1L, 5L, -7L)
+typeof(int)
+```
+
+  Se debe tener en cuenta que R guarda con una precisión de 16 decimales, provocando inconsistencias como esta:
+```{r}
+a = (sqrt(2)**2) - 2
+a == 0
+print(a)
+```
+
+  Se pueden comprobar que son de tipo numérico:
+```{r}
+is.numeric(a)
+```  
+ 
+ Se pueden convertir elementos a tipo numérico:
+```{r}
+a <- c("1","2","3")
+typeof(a)
+a <- as.numeric(a)
+typeof(a)
+```  
+
+- **Characters**. Si los elementos son pequeños textos hablamos de un vector de tipo *character*
+```{r}
+Hello <- c("Hello", " World")
+Hello
+```
+  Se pueden comprobar que son de tipo *character*:
+```{r}
+is.character(Hello)
+```
+  
+  O convertir a tipo *character*:
+```{r}
+gender <- factor(c(rep("M",3),rep("H",3)))
+typeof(gender)
+gender <- as.character(gender)
+typeof(gender)
+```
+
+
+- **Logicals**. Son vectores lógicos, que pueden tomar dos valores: TRUE o FALSE.
+```{r}
+mi_num <- 2>5
+mi_num
+```
+  Se puede comparobar su tipo mediante:
+
+```{r}
+is.logical(mi_num)
+```
+
+  Se pueden convertir elementos a tipo lógico mediante:
+
+```{r}
+a <- c(0,1)
+typeof(a)
+a <- as.logical(a)
+typeof(a)
+a
+```
+
+
+- **Complex**. Almacenan números complejos:
+
+```{r}
+com <- c(1+2i, 5+3i)
+typeof(com)
+```
+
+- **Row** Almacenan bytes:
+```{r}
+rw <- raw(5)
+rw
+```
+
+### 2. Matrix
+Una **matriz** es un conjunto de datos de dos dimensiones, como una tabla. Se puede comprender como un conjunto de vectores. Al igual que los vectores, todos sus elementos deben ser del mismo tipo.
+
+```{r}
+my_matrix <- matrix(dado, nrow=2, byrow=TRUE)
+my_matrix
+```
+
+Puedo acceder a los elementos de la matriz indicando sus filas y columnas, sepadando mediante ',' sus filas y columnas:
+```{r}
+my_matrix[2,3]
+my_matrix[,3]
+my_matrix[1,]
+my_matrix[1,2:3]
+```
+
+Puedo combinar vectores para que conformen una matriz mediante `cbind` y `rbind`.
+
+```{r}
+vector_1 <- c("12 Oros", "12 Copas", "12 Espadas", "12 bastos")
+vector_2 <- c("11 Oros", "11 Copas", "11 Espadas", "11 bastos")
+cartas <- rbind(vector_1, vector_2)
+print(cartas)
+```
+
+Se accedería a ellos mediante nombre o posición:
+
+```{r}
+cartas[1,1]
+cartas["vector_1",1]
+```
+
+### 3. Array
+Un **Array** es como una matriz, pero de más de dos dimensiones. Igual que los vectores y las matrices, todos los elementos deben ser del mismo tipo.
+
+```{r}
+my_array <- array(c(11:14, 21:24, 31:34), dim=c(2,2,3))
+my_array
+```
+
+Puedo acceder a los elementos del array indicando sus filas y columnas, sepadando mediante ',' tantas dimensiones como tenga:
+```{r}
+my_array[1,2,3]
+my_array[1,,3]
+```
+
+### Atributos
+Los atributos (`attributes()`) son piezas de información de las entradas de los elementos de un objeto en R. Por ejemplo, podemos generan un vector con dos entradas: 0 y 1 para la cara y la cruz de una moneda para que quede más claro.
+
+```{r}
+attributes(moneda) = list("cruz" = 0, "cara" = 1)
+moneda
+```
+
+Si un objeto no tiene atributos devuelve el **vector vacío** o `NULL`.
+```{r}
+attributes(dado)
+```
+
+### Nombres
+Un tipo de atributo son los nombres (`names()`) de cada ina de sus entradas.
+
+```{r}
+moneda_2 <- c(0,1)
+names(moneda_2) <- c("cruz","cara")
+moneda_2
+```
+
+### Dimesión
+La dimensión es otro atributo que se puede asignar a un vector para transformarlo en una matriz de la dimensionalidad deseada, como se vio anteriormente
+
+```{r}
+dim(dado) = c(2,3)
+dado
+```
+
+### Clase
+Otro tipo de atributo de los objetos de R es la clase. Mientras que `typeof` hace referencia al contenido, `class` hace referencia al continente:
+
+```{r}
+typeof(my_matrix)
+class(my_matrix)
+```
+
+### Factores
+Los factores son un tipo de objeto en R muy contronvertido, pero muy utilizado. Su utilidad es almacernar variables categóricas como el color de los ojos, la raza, etc. Así que son muy utilizados en el análisis estadístico. Sin embargo, hay que tener cuidado en almacenar como factor algo que no vamos a utilizar como tal, ya que lo convierte automáticamente en números.
+
+Veamos un ejemplo de cuándo la utilización de factores tiene sentido:
+```{r}
+gender <- factor(c(rep("M",6),rep("F",6)))
+weight <- c(rnorm(6,75,5), rnorm(6,65,3))
+lm(weight~gender)
+```
+
+- En este caso se han creado como género 6 hombres y 6 mujeres y se ha importado como factor (2 y 2).
+- Posteriormente se han creado 6 y 6 valores aleatorios para cada sexo de media 75 y 5 de sd para el género Masculino y de media 65 y 5 de sd para el género Femenino.
+- Se ha realizado una regresión lineal con esos parámetros.
+
+Se puede ver cómo se han almacenado los factores de la siguiente manera:
+```{r}
+attributes(gender)
+unclass(gender)
+```
+
+Se podrían transformar en vectores de caracteres mediante:
+```{r}
+as.character(gender)
+```
+
+O incluso creando los elementos con `stringsAsFactors = FALSE` como se verá a continuación:
+
+
+### Listas
+Hasta ahora se ha visto que los vectores, matrices y arrays exigen que todos los elementos sean del mismo tipo.¿Qué ocurre si queremos aglutinar vectores atómicos de distintos tipos y tamaños? Para eso están las **listas**.
+
+```{r}
+my_list = list("Javier", "Moreno", 29)
+my_list
+```
+
+
+### Data Frames
+Y si los vectores tienen los matrices y arrays, las listas tienen los `data.frame` que nos permiten trabajar con elementos de distinto tipo y tamaño.
+
+```{r}
+baraja <- data.frame(c("Sota", "Caballo", "Rey"), c(10,11,12))
+baraja
+```
+
+```{r}
+class(baraja)
+```
+
+Se puede ver mejor un `data.frame` mediante `View()`:
+
+```{r}
+View(baraja)
+```
+
+O sus primeras filas mediante `head()`:
+```{r}
+head(baraja)
+```
+
+Podemos dar incluso nombre a sus elementos:
+```{r}
+baraja <- data.frame(carta=c("Sota", "Caballo", "Rey"), puntos=c(10,11,12))
+baraja
+```
+
+Un nuevo atributo para los `data.frame` es `str()` que da información sobre la estructura del obvbjeto:
+
+```{r}
+str(baraja)
+```
+
+Como se puede ver, ha convertido a tipo factor la baraja, y puede que no nos interese, así que podmeos evitarlo:
+
+```{r}
+baraja <- data.frame(carta=c("Sota", "Caballo", "Rey"), puntos=c(10,11,12), stringsAsFactors = FALSE)
+baraja
+```
+
+```{r}
+str(baraja)
+```
+
+Puedo averiguar el nombre de las columnas mediante `colnames`.
+```{r}
+colnames(baraja)
+```
+
+Mediante el mismo comando también puedo cambiar el nombre de las columnas.
+```{r}
+colnames(baraja) <- c("figura", "valor")
+colnames(baraja)
+```
+
+Puedo averiguar el índice de las filas mediante `row.names`
+```{r}
+row.names(baraja)
+```
+
+E igualmente cambiarlo:
+
+Puedo averiguar el nombre de las columnas mediante `colnames`.
+```{r}
+row.names(baraja) = baraja$figura
+baraja
+```
+
+
+Para acceder a una coumna se utiliza el símbolo '$'.
+```{r}
+baraja$figura
+```
+
+Para filtrar data.frame es muy común el uso de índices
+
+```{r}
+baraja <- data.frame("carta"=rep(c(1:7,10:12),times=4),
+                     "palo"= rep(c("Oros","Copas","Bastos","Espadas"), each=10),
+                     "puntos"= rep(c(11,0,10,0,0,0,0,7,8,9),times=4),
+                     stringsAsFactors = FALSE)
+baraja
+```
+
+- Se puede filtrar mediante filas o columnas
+```{r}
+baraja[2,]
+```
+
+```{r}
+baraja[,2]
+```
+
+- Se puede filtrar mediante vectores:
+
+```{r}
+baraja[1,c(1,2,3)]
+```
+
+- Se puede filtrar mediante rangos:
+
+```{r}
+baraja[1:40,2]
+```
+
+**IMPORTANTE**. SIn embargo, si se filtra toda una columna R devolverá un vector a menos que se le indique `drop=FALSE`.
+
+```{r}
+baraja[1:40,2, drop=F]
+```
+
+- Se pude filtrar por enteros negativos, pero al contrario que Python, no indica la última posición, sino que excluye al último:
+
+```{r}
+baraja[1,-1]
+```
+
+- Se puede filtrar por nombres:
+
+```{r}
+baraja[5,c("palo","puntos")]
+```
+
+- Se puede filtrar por indexado.
+
+```{r}
+baraja[2,1]
+```
+
+- Se puede filtrar mediante operadores lógicos:
+
+```{r}
+baraja[baraja$carta == 5 & baraja$palo == "Oros",]
+```
+
+R proporciona 7 operadores lógicos para hacer comparaciones, Table \@ref(tab:logop). 
+
+Table: (\#tab:logop) R's Logical Operators
+
+|Operator|Syntax|Tests
+|--------|------|-----
+|`>`|`a > b`|Is a greater than b?
+|`>=`|`a >= b`|Is a greater than or equal to b?
+|`<`|`a < b`|Is a less than b?
+|`<=`|`a <= b`|Is a less than or equal to b?
+|`==`|`a == b`|Is a equal to b?
+|`!=`|`a != b`|Is a not equal to b?
+|`%in%`|`a %in% c(a, b, c)`|Is a in the group c(a, b, c)? 
+
+Cada operador devuelve `TRUE` o `FALSE`. Si se usa para compara vectores, la comparación será elemento a elemento:
+
+```{r}
+c(1,2,3) == c(3,2,1)
+```
+
+Sin embargo, `%in%` no compara elemento a elemento y es similar al ***lookup*** de Excel: busca si el valor de la izquierda está en el vector de la derecha. Si hay también un vector a la izquierda buscará si cada valor en el vector de la izquierda está en el vector de la derecha independientemente unos de otros:
+
+```{r}
+c(1,2) %in% c(2,6,7,1,4,8,1)
+```
+```{r}
+c(2,6,7,1,4,8) %in% c(1,2)
+```
+
+Como son *booleanos* y su valor son unos y ceros, se pueden sumar para contarlos
+
+```{r}
+sum(c(2,6,7,1,4,8) %in% c(1,2))
+```
+
+- Otro ejemplo del uso de `%in%` en el caso que se estaba explicando.  En este caso se filtran los ases y los reyes.
+
+```{r}
+baraja[baraja$carta %in% c(1,12),]
+```
+
+- Del mismo modo, se puede usar `which()` para obtener los índices posicionales de filas en vez de los elementos
+
+```{r}
+which(baraja$carta %in% c(1,12))
+```
+
+**IMPORTANTE**: No olvidar **JAMÁS** la coma de las filas, si no se pone falla.
+
+### Operadores booleanos
+
+Además de los operadores lógicos, contamos con los operadores booleanos. 
+
+|Operator|Syntax|Tests
+|--------|------|-----
+|`&`|`cond1 & cond2`|Are both `cond1` and `cond2` true?
+|`|`|`cond1 | cond2`|Is one or more of `cond1` and `cond2` true?
+|`xor`|`xor(cond1, cond2)`|Is exactly one of `cond1` and `cond2` true?
+|`!`|`!cond1`|Is `cond1` false? (e.g., `!` flips the results of a logical test)
+|`any`|`any(cond1, cond2, cond3, ...)`|Are any of the conditions true?
+|`all`|`all(cond1, cond2, cond3, ...)`|Are all of the conditions true?
+
+Por ejemplo:
+
+```{r}
+a <- c(1, 2, 3)
+b <- c(1, 2, 3)
+c <- c(1, 2, 4)
+a == b
+b == c
+a == b & b == c
+```
+
+Hace poco se puso un ejemplo de cómo utilizar un operador booleano para encontrar el 5 de oros en la baraja
+
+```{r}
+baraja[baraja$carta == 5 & baraja$palo == "Oros",]
+```
+
+### Modificando data.frame
+Cuando se vaya a modificar un data.frame, es mejor realizar una copia por si se realiza un error.
+```{r}
+baraja2 <- baraja
+```
+
+Se puede modificar un data.frame por asignación:
+
+```{r}
+indice <- baraja2$carta == 1
+baraja2[indice,]
+#Ojo, aquí ya no se indica la coma porque se selecciona toda la columna
+baraja2$puntos[indice] = 20
+baraja2[indice,]
+```
+
+De la misma forma, se le pueden añadir nuevas variables al data.frame:
+```{r}
+baraja2$nuevo_campo = rep(c("a","b","c","d"),times=10)
+baraja2
+```
+
+O eliminar columnas mediante el uso de `NULL`
+```{r}
+baraja2$nuevo_campo = NULL
+baraja2
+```
+
+### Missing information
+En data science es común encontrarse con valores perdido porque no se han recogido, porque la medición no era correcta, etc.
+
+En testos casos es preferible no usar nada a usar un valor que no es correcto. Y por supuesto no se va a descartar a un individuo solo porque una de sus mediciones no esté disponible.
+
+En R el símbolo NA se utiliza para denotar un "missing value". La mayor parte de las funciones y operadores de R saben como lidiar con este problema. Por ejemplo:
+
+```{r}
+1 + NA
+## NA
+NA == 1
+## NA
+```
+
+La respuesta en ambos casos es "No se". La información de que no disponemos de ese valor se propaga. 
+
+### na.rm
+
+Este es el comando por el que le indicamos a R que quite (rm=remove) los missing values de un vector:
+
+```{r}
+c(NA, 1:50)
+mean(c(NA, 1:50))
+## NA
+mean(c(NA,1:50),na.rm=T)
+```
+
+### is.na
+
+Nos devuelve un lógico indicando si alguna de las componentes del vector son valores perdidos:
+
+```{r}
+NA == NA
+c(1, 2, 3, NA) == NA
+is.na(NA)
+vec <- c(1, 2, 3, NA)
+is.na(vec)
+!is.na(vec)
+vec[!is.na(vec)]
+```
+
+### Funciones
+Esta es una de las mayores peculiaridades de R: se pueden escribir funciones que, a su vez, son también objetos.
+Su estructura es:
+```{r}
+my_function <- function(x,y){
+  resultado = x*y
+  return(resultado)
+}
+
+my_function(5,7)
+```
+
+Otro ejemplo, simulando la tirada de un dado:
+```{r}
+tirada <- function(x){
+  return(sample(x,1))
+}
+
+tirada(dado)
+```
+
+El resultado puede ser manipulado como el resto de objetos:
+```{r}
+min(dado)
+max(dado)
+#Para saber el índice máximo se usa 'which.max'
+which.max(dado)
+#Para saber el índice mínimo se usa 'which.min'
+which.min(dado)
+```

@@ -1,5 +1,5 @@
 ---
-title: "Primeros_pasos_R"
+title: "Primeros pasos en R"
 author: "Javier_Moreno"
 date: "10/2/2020"
 output:
@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 Para crear un primer documento en R, es necesario seleccionar cu√°l va a ser el *Working Directory*.
 Esto se puede hacer en la barra superior en `Session > Set Working Directory` o a trav√©s de:
 
-```{r}
+```{r, error=TRUE}
 setwd("C:/Users/Jota_Moreno/Downloads")
 ```
 
@@ -28,7 +28,7 @@ getwd()
 ```
 
 ## Creaci√≥n del primer documento en R
-Una vez que se ha seleccionado *Working Directory* se puede crear un nuevo documento de trabajo. En RStudio se puede trabajar con diferentes tipos de documento. Se puede crear en el s√≠mbolo '+' de la barra superior y en'New File'.
+Una vez que se ha seleccionado *Working Directory* se puede crear un nuevo documento de trabajo. En RStudio se puede trabajar con diferentes tipos de documento. Se puede crear en el s√?mbolo '+' de la barra superior y en'New File'.
 
 Es com√∫n trabajar con *R Script* y *R Markdown*
 
@@ -54,6 +54,28 @@ Una vez se ha isntalado el paquete, debe cargarse o bien en el panel inferior de
 ```{r}
 library(tidyverse)
 ```
+
+## InstalaciÛn de paquetes a travÈs de `devtools`
+
+El paquete devtools forma parte de CRAN, por lo tanto podemos instalarlo usando:
+
+```{r, echo=F}
+#install.packages("devtools",dependencies = T)
+library(devtools)
+```
+A partir de ahi se pueden instalar paquetes de distintas fuentes usando distintas funciones:
+
+    install_bioc() from Bioconductor,
+    install_bitbucket() from Bitbucket,
+    install_cran() from CRAN,
+    install_git() from a git repository,
+    install_github() from GitHub,
+    install_local() from a local file,
+    install_svn() from a SVN repository,
+    install_url() from a URL, and
+    install_version() from a specific version of a CRAN package.
+
+Lo usaremos mucho durante el resto del curso porque algunos de los datasets que necesitamos vienen en paquetes contribuidos pero fuera de CRAN.
 
 ## Variables del entorno
 Se pueden ver todas las variables existentes en el entorno en el cuadro superior de la derecha o mediante el comando:
@@ -239,7 +261,7 @@ cartas <- rbind(vector_1, vector_2)
 print(cartas)
 ```
 
-Se acceder√≠a a ellos mediante nombre o posici√≥n:
+Se acceder√?a a ellos mediante nombre o posici√≥n:
 
 ```{r}
 cartas[1,1]
@@ -268,7 +290,7 @@ attributes(moneda) = list("cruz" = 0, "cara" = 1)
 moneda
 ```
 
-Si un objeto no tiene atributos devuelve el **vector vac√≠o** o `NULL`.
+Si un objeto no tiene atributos devuelve el **vector vac√?o** o `NULL`.
 ```{r}
 attributes(dado)
 ```
@@ -299,7 +321,7 @@ class(my_matrix)
 ```
 
 ### Factores
-Los factores son un tipo de objeto en R muy contronvertido, pero muy utilizado. Su utilidad es almacernar variables categ√≥ricas como el color de los ojos, la raza, etc. As√≠ que son muy utilizados en el an√°lisis estad√≠stico. Sin embargo, hay que tener cuidado en almacenar como factor algo que no vamos a utilizar como tal, ya que lo convierte autom√°ticamente en n√∫meros.
+Los factores son un tipo de objeto en R muy contronvertido, pero muy utilizado. Su utilidad es almacernar variables categ√≥ricas como el color de los ojos, la raza, etc. As√? que son muy utilizados en el an√°lisis estad√?stico. Sin embargo, hay que tener cuidado en almacenar como factor algo que no vamos a utilizar como tal, ya que lo convierte autom√°ticamente en n√∫meros.
 
 Veamos un ejemplo de cu√°ndo la utilizaci√≥n de factores tiene sentido:
 ```{r}
@@ -318,7 +340,7 @@ attributes(gender)
 unclass(gender)
 ```
 
-Se podr√≠an transformar en vectores de caracteres mediante:
+Se podr√?an transformar en vectores de caracteres mediante:
 ```{r}
 as.character(gender)
 ```
@@ -370,7 +392,7 @@ Un nuevo atributo para los `data.frame` es `str()` que da informaci√≥n sobre la 
 str(baraja)
 ```
 
-Como se puede ver, ha convertido a tipo factor la baraja, y puede que no nos interese, as√≠ que podmeos evitarlo:
+Como se puede ver, ha convertido a tipo factor la baraja, y puede que no nos interese, as√? que podmeos evitarlo:
 
 ```{r}
 baraja <- data.frame(carta=c("Sota", "Caballo", "Rey"), puntos=c(10,11,12), stringsAsFactors = FALSE)
@@ -392,7 +414,7 @@ colnames(baraja) <- c("figura", "valor")
 colnames(baraja)
 ```
 
-Puedo averiguar el √≠ndice de las filas mediante `row.names`
+Puedo averiguar el √?ndice de las filas mediante `row.names`
 ```{r}
 row.names(baraja)
 ```
@@ -406,12 +428,12 @@ baraja
 ```
 
 
-Para acceder a una coumna se utiliza el s√≠mbolo '$'.
+Para acceder a una coumna se utiliza el s√?mbolo '$'.
 ```{r}
 baraja$figura
 ```
 
-Para filtrar data.frame es muy com√∫n el uso de √≠ndices
+Para filtrar data.frame es muy com√∫n el uso de √?ndices
 
 ```{r}
 baraja <- data.frame("carta"=rep(c(1:7,10:12),times=4),
@@ -513,7 +535,7 @@ sum(c(2,6,7,1,4,8) %in% c(1,2))
 baraja[baraja$carta %in% c(1,12),]
 ```
 
-- Del mismo modo, se puede usar `which()` para obtener los √≠ndices posicionales de filas en vez de los elementos
+- Del mismo modo, se puede usar `which()` para obtener los √?ndices posicionales de filas en vez de los elementos
 
 ```{r}
 which(baraja$carta %in% c(1,12))
@@ -562,7 +584,7 @@ Se puede modificar un data.frame por asignaci√≥n:
 ```{r}
 indice <- baraja2$carta == 1
 baraja2[indice,]
-#Ojo, aqu√≠ ya no se indica la coma porque se selecciona toda la columna
+#Ojo, aqu√? ya no se indica la coma porque se selecciona toda la columna
 baraja2$puntos[indice] = 20
 baraja2[indice,]
 ```
@@ -584,7 +606,7 @@ En data science es com√∫n encontrarse con valores perdido porque no se han recog
 
 En testos casos es preferible no usar nada a usar un valor que no es correcto. Y por supuesto no se va a descartar a un individuo solo porque una de sus mediciones no est√© disponible.
 
-En R el s√≠mbolo NA se utiliza para denotar un "missing value". La mayor parte de las funciones y operadores de R saben como lidiar con este problema. Por ejemplo:
+En R el s√?mbolo NA se utiliza para denotar un "missing value". La mayor parte de las funciones y operadores de R saben como lidiar con este problema. Por ejemplo:
 
 ```{r}
 1 + NA
@@ -645,8 +667,421 @@ El resultado puede ser manipulado como el resto de objetos:
 ```{r}
 min(dado)
 max(dado)
-#Para saber el √≠ndice m√°ximo se usa 'which.max'
+#Para saber el √?ndice m√°ximo se usa 'which.max'
 which.max(dado)
-#Para saber el √≠ndice m√≠nimo se usa 'which.min'
+#Para saber el √?ndice m√?nimo se usa 'which.min'
 which.min(dado)
 ```
+
+## if
+El comando `if` se utiliza para seleccionar situaciones en las que se cumple una determinada condiciÛn.Si se cumple esto, haz aquello:
+
+```{r, error=TRUE}
+if (this) {
+  that
+}
+```
+
+- `this` tiene que ser el resultado de un test lÛgico (*booleano*) y resultar por tanto en TRUE o FALSE.  
+- Si la conduciÛn del `this` se cumple (TRUE) se ejecutar· el cÛdigo entre corchetes. Si no se cumple (FALSE) no se har· nada.
+- El resultado del tets lÛgico tiene que ser un vector de solo una dimensiÛn. Si es un vector de vaios TRUE/FALSE se evaluar· solamente el primer elemento del vector.
+  - En ese sentido, se debe recordar que `any` y `all` condensan las entradas del vector lÛgico en un solo valor
+
+A continuaciÛn se ve un ejemplo en el que se convierte un n˙mero negativo en positivo:
+
+```{r}
+num = -3
+if (num < 0) {
+  print("Tu n˙mero es negativo")
+  num = num * (-1)
+  print("Se ha convertido tu n˙mero a uno positivo")
+}
+num
+```
+
+## else
+Hasta ahora, si no se cumple la condiciÛn impuesta R no hace nada, pero se puede necesitar que R haga algo si no se cumple la condiciÛn, en cuyo caso se usa `else`.
+
+```{r,error=TRUE}
+if (this) {
+  Plan A
+} else {
+  Plan B
+}
+```
+
+Por ejemplo, a continuaciÛn se va a hacer un cÛdigo que redondee un decimal al entero m·s cercano mediantr `trunc`.
+
+```{r}
+a = 4.79
+a - trunc(a)
+```
+```{r}
+a = 4.79
+
+if (a >= 0.5) {
+  a = trunc(a) + 1
+} else {
+  a = trunc(a)
+}
+
+a
+```
+
+#else if
+Si hay diferentes casos, se puede usar else if:
+
+```{r}
+a = 8.20
+
+if (a > 0){
+  print("Number greater than 0")
+} else if (a == 0){
+  print("Numer equal to 0")
+} else {
+  print("Number lower than 0")
+}
+```
+
+# Bucles `for` y `while`
+Aunque muchos de los puristas de R dicen que R ya tiene incorporado todo lo necesario para no usar bucles, refiriÈndose a las funciones de la familia `apply`, vamos a ver a continuaciÛn cÛmo realizarlos.
+
+Imaginemos que tenemos un dataset con una multitud de resultados que indican 'cara' y 'cruz'. Una manera f·cil y r·pida de contarlos serÌa con un bucle for. Su estructura es:
+
+```{r, error=TRUE}
+for (k in rango){
+  do something
+}
+```
+
+Por ejemplo:
+
+```{r}
+moneda = c("Cara","Cara","Cruz","Cara","Cara","Cruz","Cruz","Cruz","Cruz","Cara","Cara","Cruz","Cara","Cruz")
+
+Cara = 0
+Cruz = 0
+
+for (i in 1:length(moneda)){
+  if (moneda[i] == "Cara"){
+    Cara = Cara +1
+  } else {
+    Cruz = Cruz +1
+  }
+}
+
+Cara
+Cruz
+
+```
+
+Este ejercicio podrÌa haberse resuelto de otra manera mediante `table`, que como si fuera una pivot table nos ayuda a contar resultados:
+
+```{r}
+table(moneda)
+
+```
+
+Pero vamos a ver un caso m·s complejo, donde no queremos saber cu·ntas caras y cruces hay, sino cuantas caras+caras, caras+cruces, cruces+cruces y cruces+caras ha habido:
+
+```{r}
+moneda = c("Cara","Cara","Cruz","Cara","Cara","Cruz","Cruz","Cruz","Cruz","Cara","Cara","Cruz","Cara","Cruz")
+
+CC = 0
+CZ = 0
+ZC = 0
+ZZ = 0
+
+#Ojo con cÛmo se pone el length entre parÈntesis, ya que de no hacerlo asÌ el largo no serÌa hasta N-1 sino de (1:N)-1, lo cual darÌa un problema
+for (i in 1:(length(moneda)-1)){
+    if ((moneda[i] == "Cara") & (moneda[i+1] == "Cara")){
+    CC = CC+1
+  } else if ((moneda[i] == "Cara") & (moneda[i+1] == "Cruz")){
+    CZ = CZ+1
+  } else if ((moneda[i] == "Cruz") & (moneda[i+1] == "Cara")){
+    ZC = ZC+1
+  } else {
+    ZZ = ZZ+1
+  }
+}
+
+CC
+CZ
+ZC
+ZZ
+
+```
+
+Se puede meter `break` para parar un bucle `for`:
+
+```{r}
+
+CC = 0
+CZ = 0
+ZC = 0
+ZZ = 0
+
+for (i in 1:(length(moneda)-1)){
+    if (CC >= 2){
+      break
+    } else {
+      if ((moneda[i] == "Cara") & (moneda[i+1] == "Cara")){
+      CC = CC+1
+    } else if ((moneda[i] == "Cara") & (moneda[i+1] == "Cruz")){
+      CZ = CZ+1
+    } else if ((moneda[i] == "Cruz") & (moneda[i+1] == "Cara")){
+      ZC = ZC+1
+    } else {
+      ZZ = ZZ+1
+    }
+  }
+}
+
+CC
+CZ
+ZC
+ZZ
+
+```
+
+De esta forma, cuando el resultado de CC sea >= 2 se parar· el bucle.
+
+Una forma relacionada es usar `while`, que realiza el bucle mientras se cumple una condiciÛn. Cuando esa condiciÛn deja de cumplirse, el bucle para. Por lo tanto, es necesario tener un contador que marque un lÌmite para evitar llegar a un bucle infinito.
+
+```{r}
+number = 8
+
+for (i in 1:1000){
+  while (number >= 0){
+    print(number)
+    number = number - i
+  }
+}
+```
+
+Otro ejemplo:
+
+```{r}
+x <- 1
+while (x <= 5){
+  print(x)
+  x <- x + 1
+}
+```
+
+## ImportaciÛn de datos en R
+Cuando se van a importar datos a partir de un archivo en la unidad de disco a la que se tiene acceso en local o remoto, lo primero es establecer el directorio de trabajo. Es importante recordar que:
+```{r}
+#Para obtener el directorio de trabajo
+getwd()
+
+#Para establecer un nuevo directorio de trabajo
+setwd("C:/Users/jmoreno7/Downloads/")
+```
+
+### Copiando un dataset almacenado en R en el directorio de trabajo
+Se va a trabajar bastante con el archivo 'murders.csv' que se encuentra en el paquete 'dslabs', asÌ que se va a copiar en local.
+
+```{r}
+#Se obtiene la direcciÛn de un documento en C: (en este caso el paquete 'dslabs') mediante `system.file`
+dslabs_dir <- system.file(package="dslabs")
+dslabs_dir
+```
+```{r}
+#Construimos el nombre del archivo en el sistema
+filename <- file.path(dslabs_dir, "extdata/murders.csv")
+filename
+```
+
+```{r}
+#Copiamos el archivo
+file.copy(filename,"murders.csv")
+
+#Se puede ver cÛmo est· ahora en el directorio de trabajo el archivo
+list.files()
+```
+
+### Funciones b·sicas en la lectura de archivos
+A continuaciÛn se va a empezar a trabajar con el data set 'murders.csv'. Es un archivo pequeÒo y f·cil de manejar.
+
+Aunque generalmente se utiliza el universo `tidyverse` para el an·lisis de datos, vamos a trabajar esta vez con `base`.
+
+```{r}
+dat <- read.csv("murders.csv")
+```
+
+Podemos echar un primer vistazo con `head`
+
+```{r}
+head(dat)
+```
+
+Alternativamente podrÌamos haber utilizado la funcion `read.delim` (tambiÈn del paquete 'base' ) que es m·s flexible pero que requiere m·s parametrizaciÛn:
+
+```{r}
+dat2 <- read.delim("murders.csv", sep=",", header=T)
+head(dat2)
+```
+Vamos a ver de quÈ clase es el objeto dat
+```{r}
+class(dat)
+```
+
+Lo ha leÌdo como un data.frame, asÌ que podemos acceder a sus columnas mediante el uso de '$'
+
+```{r}
+dat$state
+```
+
+Sin embargo, se puede ver cÛmo la variable state se he volcado en R como factor y, salvo que se vayan a trabajar como tal, est· desaconsejado importarlos de esta manera, ya que los transforma a elementos numÈricos. SerÌa por lo tanto tenerlos como strings. Por ello se va a incluir al importar la opciÛn `stringsAsFactors = FALSE`.
+
+```{r}
+dat <- read.csv("murders.csv", stringsAsFactors = FALSE)
+str(dat)
+```
+
+Como se puede ver, mediante `str` puedo ver la estructura del data frame y ver que se han importado como strings.
+
+#Abrir archivos .xlsx
+Los archivos .xlsx se pueden abrir con `read.xlsx`, que nos obliga a indicar la hoja que queremos:
+
+```{r}
+dat2 <- read.xlsx(file = "DataSets/murders.xlsx",sheetIndex = 1)
+```
+
+
+**NOTA IMPORTANTE: ** ASCII es un sistema de codificacion que convierte los caracteres en n˙meros. ASCII usa 7 bits (0000001) por lo que se pueden generar un total de 128 sÌmbolos. Para lenguages con un gran n˙mero de sÌmbolos se puede utilizar otra codificaciÛn llamada UTF para la que se pueden escoger combinaciones de 8, 16 o 24 bits. RStudio utiliza UTF-8.
+**NOTA IMPORTANTE 2: ** Todos los archivos que hemos leido hasta ahora son archivos de texto; i.e. se pueden leer con un editor cualquiera. Archivos xls, html, json son binarios y necesitaremos otro tipo de herramientas para leerlos. 
+
+### CÛmo abrir grandes archivos
+El paquete *data.table* contiene funciones para leer archivos de varios megas de RAM. En particular *fread()* funciona muy bien y se le pueden ajustar los par·metros: 'sep', 'colClasses' and 'nrows'.
+```{r}
+library(data.table)
+
+counts.rnaseq <- fread("DataSets/Counts.genes.DiffAll.genes.limma.random.txt",sep = "\t",showProgress=T)
+
+head(counts.rnaseq)
+
+class(counts.rnaseq)
+```
+
+Esta funciÛn devuelve un objeto data.table en lugar de un data.frame a no ser que se le especifique: `data.table=FALSE`. 
+
+A continuaciÛn se muestra un ejemplo extraÌdo del manual de `data.table` que muestra cÛmo se aligeran los tiempos de carga:
+
+```{r}
+library(data.table)
+
+n = 1e6
+DT = data.table( a=sample(1:1000,n,replace=TRUE),
+                 b=sample(1:1000,n,replace=TRUE),
+                 c=rnorm(n),
+                 d=sample(c("foo","bar","baz","qux","quux"),n,replace=TRUE),
+                 e=rnorm(n),
+                 f=sample(1:1000,n,replace=TRUE) )
+DT[2,b:=NA_integer_]
+DT[4,c:=NA_real_]
+DT[3,d:=NA_character_]
+DT[5,d:=""]
+DT[2,e:=+Inf]
+DT[3,e:=-Inf]
+
+write.table(DT,
+            "test.csv",
+            sep=",",
+            row.names=FALSE,
+            quote=FALSE)
+
+cat("File size (MB):",
+    round(file.info("test.csv")$size/1024^2),"\n")
+
+system.time(DF1 <-read.csv("test.csv",stringsAsFactors=FALSE))
+
+system.time(DF2 <- read.table("test.csv",header=TRUE,sep=",",quote="",
+    stringsAsFactors=FALSE,comment.char="",nrows=n,
+    colClasses=c("integer","integer","numeric",
+                 "character","numeric","integer")))
+system.time(DT <- fread("test.csv"))
+  #require(sqldf)
+  #require(ff)
+
+
+identical(DF1,DF2)
+all.equal(as.data.table(DF1), DT)
+
+```
+
+Como se puede ver en el ejemplo, se han utilizado tres funciones diferentes para leer un archivo generado de 51MB: `read.csv`, `read.table` y `fread` y la diferencia de tiempo es considerable a favor de `fread`.
+
+## El paquete *tidyverse*
+Ya se ha visto cÛmo el paquete *xlsx* (y otros) contienen funciones para leer archivos excel en R. 
+
+El paquete *tidyverse* tambiÈn puede utilizarse para ello a traves de las funciones:
+
+| Function  | Separador                                        | Sufijo         |
+|-----------|--------------------------------------------------|----------------| 
+| read_table| espacio | txt |
+| read_csv | , |  csv |
+| read_csv2 | ; | csv |
+| read_tsv | tab | tsv |
+| read_delim | general | txt |
+| read_excel | auto detect the format | xls, xlsx|
+| read_xls | original format |  xls |
+| read_xlsx | new format | xlsx |
+
+Todas estas funciones son parecidas a las que existen en el paquete 'base' separadas por un punto como *read.csv*, pero separadas ahora por '_' Comparemos ambas funciones:
+
+```{r, message=FALSE}
+library(tidyverse)
+
+dat=read.csv("murders.csv")
+class(dat)
+
+dat2=read_csv("murders.csv")
+class(dat2)
+
+```
+Se puede ver que el tipo de este data.frame importado es **tibble**, øquÈ es un tibble?:
+
+- Tibble nunca cambia el tipo de una variable (si es caracter, es caracter, no factor...)
+```{r, message=FALSE}
+tibble(x = letters)
+tibble(x = 1:3, y = list(1:5, 1:10, 1:20))
+```
+-  Tibble nunca cambia el nombre de las variables
+```{r, message=FALSE}
+names(tibble("Old Alphabet" = letters))
+names(data.frame("Old Alphabet" = letters))
+```
+- Eval˙a los argumentos secuencialmente
+```{r, message=FALSE}
+#data.frame(z=1:5,y=z ^ 2)
+tibble(x = 1:5, y = x ^ 2)
+```
+- El objetivo fundamental de un **tibble** es almacenar las variables de una forma consistente, por lo que no hace uso de row.names 
+
+- Printing: Por defecto solo se escriben en pantalla las 10 primeras filas y todas las columnas que quepan. Se puede cambiar el tipo de letra, color, etc. `tibble.print_max = Inf` muestra todas las filas
+```{r, message=FALSE}
+tibble(x = 1:5, y = x ^ 2)
+data.frame(x=1:5,y=(1:5)^2)
+```
+- Subsetting siempre devuelve otro objeto tibble, sea de las dimensiones que sea
+```{r, message=FALSE}
+df1 <- data.frame(x = 1:3, y = 3:1)
+class(df1[, 1:2])
+class(df1[, 1])
+```
+```{r, message=FALSE}
+df2 <- tibble(x = 1:3, y = 3:1)
+class(df2[, 1:2])
+class(df2[, 1])
+```
+
+- Si una columna no tiene exactamente el nombre por el que se la llama no se hace partial matching:
+```{r, message=FALSE}
+df <- data.frame(abc = 1)
+df$a
+df2 <- tibble(abc = 1)
+df2$a
+```
+

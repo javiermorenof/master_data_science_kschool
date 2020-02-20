@@ -15,20 +15,20 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# La importancia de la visualizaci√≥n de datos
+# La importancia de la visualizaciÛn de datos
 
-Cuando trabajamos con grandes cantidades es esencial utilizar diferentes tipo de visualizaciones para explorar los datos. S√≥lo as√≠ podremos darnos cuenta de diferentes sesgos que deben ser corregidos o incluso de errores. 
+Cuando trabajamos con grandes cantidades es esencial utilizar diferentes tipo de visualizaciones para explorar los datos. SÛlo asÌ podremos darnos cuenta de diferentes sesgos que deben ser corregidos o incluso de errores. 
 
-Adem√°s la visualizaci√≥n de los datos es esencial para extraer patrones y conclusiones cuando vemos muchos datos. Esto es algo que la mente humana en la poblaci√≥n general no puede hacer a partir de n√∫meros. Por ejemplo, este art√≠culo del Wall Street Journal muestra como ha sido la evoluci√≥n de ciertas enfermedades infecciosas desde su aparici√≥n hasta la aplicaci√≥n de las vacunas: *http://graphics.wsj.com/infectious-diseases-and-vaccines/?mc_cid=711ddeb86e*
+Adem·s la visualizaciÛn de los datos es esencial para extraer patrones y conclusiones cuando vemos muchos datos. Esto es algo que la mente humana en la poblaciÛn general no puede hacer a partir de n˙meros. Por ejemplo, este artÌculo del Wall Street Journal muestra como ha sido la evoluciÛn de ciertas enfermedades infecciosas desde su apariciÛn hasta la aplicaciÛn de las vacunas: *http://graphics.wsj.com/infectious-diseases-and-vaccines/?mc_cid=711ddeb86e*
 
-Vamos a comenzar por ver partes de la charla TED de Hans Rosling de la fundaci√≥n gapminder de la que os habl√© en la clase anterior: *https://www.ted.com/talks/hans_rosling_shows_the_best_stats_you_ve_ever_seen*
+Vamos a comenzar por ver partes de la charla TED de Hans Rosling de la fundaciÛn gapminder de la que os hablÈ en la clase anterior: *https://www.ted.com/talks/hans_rosling_shows_the_best_stats_you_ve_ever_seen*
 
 
 # R Basic plots: paquete *graphics()*
 Una de las grandes fortalezas de R consiste en la facilidad con la que podemos representar datos de diferentes formas y con formato de alta calidad. Visualizar los datos es esencial para entenderlos y proponer modelos.
 
-Para seguir esta sesi√≥n necesitar√°s tener instaladas las siguientes librerias:
-```{r,warning=F,message=F}
+Para seguir esta sesiÛn necesitar·s tener instaladas las siguientes librerias:
+```{r,warning=F,message=F, echo=F}
 library(dslabs)
 library(ggplot2)
 library(dplyr)
@@ -37,7 +37,7 @@ library(readr)
 ```
 
 ## Scatterplots (nubes de puntos)
-El plot m√°s b√°sico en el que podemos pensar es una nube de puntos. Solemos utilizarlo con frecuencia si queremos entender la relaci√≥n que existe entre dos variables. Por ejemplo, si queremos ver la relaci√≥n entre el n√∫mero de asesinatos en un estado y su poblaci√≥n (por 100.000 habitantes) utilizamos la funci√≥n *plot()*
+El plot m·s b·sico en el que podemos pensar es una nube de puntos. Solemos utilizarlo con frecuencia si queremos entender la relaciÛn que existe entre dos variables. Por ejemplo, si queremos ver la relaciÛn entre el n˙mero de asesinatos en un estado y su poblaciÛn (por 100.000 habitantes) utilizamos la funciÛn *plot()*
 
 ```{r}
 data(murders)
@@ -45,7 +45,7 @@ data(murders)
 plot(murders$total,murders$population/10^5)
 ```
 
-Para esta funci√≥n podemos ajustar el tipo de punto con el par√°metro *pch*:
+Para esta funciÛn podemos ajustar el tipo de punto con el par·metro *pch*:
 ```{r}
 plot(murders$total,murders$population/10^5,pch="*")
 ```
@@ -55,62 +55,62 @@ O el color:
 plot(murders$total,murders$population/10^5,pch="*",col="red")
 ```
 
-Cada vez que llamamos a la funci√≥n *plot()* se abre una nueva ventana. Si queremos pintar en un gr√°fico ya existente tenemos dos opciones:
+Cada vez que llamamos a la funciÛn *plot()* se abre una nueva ventana. Si queremos pintar en un gr·fico ya existente tenemos dos opciones:
+- O bien usar `par(new=TRUE)`
 
 ```{r}
 plot(murders$total,murders$population/10^5,pch="*",col="red")
 par(new=T)
 plot(murders$total,murders$population/10^5,pch="o")
 ```
-o bien usar *points()* o *lines()* que pintan puntos o unen puntos por medio de l√≠neas si los puntos ya est√°n dibujados. La funci√≥n abline pinta una linea de pendiente b y ordenada en el origen a.
+- O bien usar *points()* o *lines()* que pintan puntos o unen puntos por medio de lÌneas si los puntos ya est·n dibujados. La funciÛn abline pinta una linea de pendiente b y ordenada en el origen a.
 ```{r}
 plot(murders$total,murders$population/10^5,pch="*",col="red")
 points(murders$total,murders$population/10^5,lty=2)
 abline(a=0,b=1,lty=2)
 ```
-El par√°metro lty controla el tipo de l√≠nea (s√≥lida, discontinua, etc) 
+Adem·s, el par·metro `lty` controla el tipo de lÌnea (sÛlida, discontinua, etc) 
 
-Estos simples gr√°ficos ya nos muestran que hay una relaci√≥n de tipo lineal entre el numero de asesinatos y la poblaci√≥n total de un estado
+Con el ejemplo que se acaba de ver de `abline`, se puede ver que se ha dibujado una relaciÛn 1:1. Es decir, que cuando x=1 y=1, pero parece ser m·s una relaciÛn 1:3 o 1:4. PodrÌamos averiguar su relaciÛn lineal realizando una regresiÛn lineal (lm), donde:
 
-Sin embargo, como se ve parece que la relaci√≥n no es tanto 1:1 sino 1:3
-
-```{r}
-plot(murders$total,murders$population/10^5,pch="*",col="red")
-points(murders$total,murders$population/10^5,lty=2)
-abline(a=0,b=0.3,lty=2)
-```
-
-Podr√≠amos verlo mejor con una regresi√≥n lineal:
+- **Y** o variable dependiente es murders$population
+- **X** o la variable independiente o predictora es murders$total
 
 ```{r}
 lm(murders$population/10^5~murders$total)
 ```
 
+Teniendo estos resultados, ya podrÌamos adecuar la recta `abline` a la realidad:
+
 ```{r}
-lm(murders$population/10^5~murders$total)
 plot(murders$total,murders$population/10^5,pch="*",col="red")
 points(murders$total,murders$population/10^5,lty=2)
 abline(a=9.138,b=0.280,lty=2)
 ```
 
-Si estroy trabajando en la l√≠nea de comandos y quisiera a√±adir algo en el gr√°fico tendr√≠a que usar `par(new=T)`.
-
-```{r}
-par(new=TRUE)
-plot(200,0,pch="o")
-```
-
-O en su lugar usar `points` en vez de plot, que a√±ade elementos al gr√°fico
-```{r}
-points(150,0)
-```
-
-## Histograms
-Un histograma nos muestra la distribuci√≥n de los elementos de una muestra. Es decir, nos dice cu√°ntos elementos de cada tipo hay.
+## Histogramas
+Un histograma nos muestra la distribuciÛn de los elementos de una muestra. Es decir, nos dice cu·ntos elementos de cada tipo hay.
 ```{r}
 hist(murders$total)
 ```
-Es decir, hay unos 32-33 estados con menos de 200 asesinatos; hay unos 10 estados con entre 200 y 400 asesinatos y el resto (~10 estados) sufrieron m√°s de 400 asesinatos. EN particular parece que hay 1 estado con entre 1200 y 1400 asesinatos.
+Es decir, hay unos 32-33 estados con menos de 200 asesinatos; hay unos 10 estados con entre 200 y 400 asesinatos y el resto (~10 estados) sufrieron m·s de 400 asesinatos. EN particular parece que hay 1 estado con entre 1200 y 1400 asesinatos.
+
+Una de las maneras de ver quÈ Estados se encuentran dentro de un rango es con `which`, que devuelve un Ìndice posicional.
+
+AsÌ, el siguiente cÛdigo devuelve que el Estado con Ìndice 5 en la lista es el que tiene un total de asesinatos > 1200.
+```{r}
+which(murders$total>1200)
+```
+
+Si se hace slicing, descubrimos que es California:
+```{r}
+murders[which(murders$total>1200),]
+```
+
+Sin el `which` hubiera funcionado tambiÈn:
+```{r}
+murders[murders$total>1200,]
+```
 
 Vamos a comprobarlo con una tabla. Primero binarizamos nuestros resultados en bins de 200:
 ```{r}
@@ -133,44 +133,48 @@ murders<-murders %>%
                        between(total,800,1000)~1000,
                        between(total,1000,1200)~1200,
                        TRUE~1400))
-murders
 table(murders$bin)
 ```
 
-El n√∫mero de bins puede cambiarse f√°cilmente con el comando *breaks()*
+El n˙mero de bins puede cambiarse f·cilmente con el comando *breaks()*.
+
+Con el ejemplo de debajo podemos hacer 10 breaks entre los elementos.
 ```{r}
 hist(murders$total,breaks=10)
 ```
-Y tambi√©n podemos elegir ver la frecuencia (n√∫mero de elementos en cada bin) o la probabilidad de tener un elemento en cada bin (# elementos en bin/total numero de elementos)
+
+Y tambiÈn podemos elegir ver la frecuencia (n˙mero de elementos en cada bin) o la probabilidad de tener un elemento en cada bin (# elementos en bin/total numero de elementos)
 ```{r}
 hist(murders$total,freq = F)
 ```
-Con este tipo de plot obtenemos una idea de c√≥mo es la distribuci√≥n de los datos: no sim√©trica, con el valor mas probable entre 0 y 200 y con algunos valores muy distintos dl resto. Estas caracter√≠sticas ser√°n las que miraremos m√°s adelante cuando queramos caracterizar distribuciones de datos.
+Con este tipo de plot obtenemos una idea de cÛmo es la distribuciÛn de los datos: no simÈtrica, con el valor mas probable entre 0 y 200 y con algunos valores muy distintos del resto. Estas caracterÌsticas ser·n las que miraremos m·s adelante cuando queramos caracterizar distribuciones de datos.
 
 ## Boxplot
-Un boxplot tambi√©n nos da pistas acerca de la distribuci√≥n de un conjunto de datos
+Un boxplot tambiÈn nos da pistas acerca de la distribuciÛn de un conjunto de datos
 ```{r}
 boxplot(murders$total)
 ```
-La estad√≠stica no param√©trica es m√°s robusta que la param√©trica.
-El equivalente en estad√≠stica param√©trica a la mediana (estad√≠stica no param√©trica), es la media; y el equivalente al rango intercuart√≠lico en estad√≠stica param√©trica es la desviaci√≥n est√°ndar.
+Como se ver· a continuaciÛn, los boxplot forman parte de la estadÌstica no paramÈtrica.
+
+La estadÌstica no paramÈtrica es m·s robusta que la paramÈtrica. El equivalente en estadÌstica paramÈtrica a la mediana (estadÌstica no paramÈtrica), es la media; y el equivalente a la desviaciÛn absoluta de la mediana (mad) en estadÌstica paramÈtrica es la desviaciÛn est·ndar.
 
 Por lo tanto:
-- Estad√≠stica param√©trica:
+- EstadÌstica paramÈtrica:
   - Media
-  - Desviaci√≥n est√°ndar
-- Estad√≠stica no param√©trica:
+  - DesviaciÛn est·ndar
+- EstadÌstica no paramÈtrica:
   - Mediana
-  - Rango intercuart√≠lico (Q3-Q1)
+  - DesviaciÛn Absoluta de la Mediana
+  - Rango intercuartÌlico (Q3-Q1)
 
-El problema estad√≠stico de los test de normalidad es que utilizan la media como referencia y como se ha visto en el ejemplo de murders, muchas veces no es significativa. Las variables discrretos generalmente no siguen una distribuci√≥n normal, mientras que la normalidad es m√°s com√∫n en variables continuas.
+El problema estadÌstico de los test de normalidad es que utilizan la media como referencia y como se ha visto en el ejemplo de murders, muchas veces no es significativa. Las variables discretas generalmente no siguen una distribuciÛn normal, mientras que la normalidad es m·s com˙n en variables continuas.
 
-Vemos que la caja tiene una linea central (la mediana) que en este caso no est√° en el medio, lo cual significa que el 50% de los valores m√°s peque√±os est√°n m√°s cerca entre si que los valores del 50% superior. Adem√°s vemos tres puntos por encima de la linea (whishart). Estos son outliers. Tenemos 3 entre los datos m√°s altos. Los outliers o valores extremos est√°n m√°s all√° del valor que deja a su izquierda el 75% de la distribuci√≥n multiplicado por 1.5. Todos estos datos se pueden observar usando la funci√≥n *summary()* sobre un vector num√©rico:
+Vemos que la caja tiene una linea central (la mediana) que en este caso no est· en el medio, lo cual significa que el 50% de los valores m·s pequeÒos est·n m·s cerca entre si que los valores del 50% superior. Adem·s vemos tres puntos por encima de la linea (whishart). Estos son outliers. Tenemos 3 entre los datos m·s altos. Los outliers o valores extremos est·n m·s all· del valor que deja a su izquierda el 75% de la distribuciÛn multiplicado por 1.5. Todos estos datos se pueden observar usando la funciÛn *summary()* sobre un vector numÈrico:
 ```{r}
 summary(murders$total)
 ```
 
-Podemos ver qu√© regiones son outliers:
+Podemos ver quÈ regiones son outliers:
 ```{r}
 murders$state[which(murders$total>600)]
 ```
@@ -181,61 +185,104 @@ murders[murders$total>600,]
 ```
 
 
-Los boxplots son particularmente interesantes para comparar distribuciones de diferentes grupos de datos. Por ejemplo, como tenemos la informaci√≥n del n√∫mero de asesinatos por region podemos hacer un boxplot del n√∫mero de asesinatos para cada region:
+Los boxplots son particularmente interesantes para comparar distribuciones de diferentes grupos de datos. Por ejemplo, como tenemos la informaciÛn del n˙mero de asesinatos por region podemos hacer un boxplot del n˙mero de asesinatos para cada region:
 ```{r}
 boxplot(murders$total~murders$region)
 ```
-La regi√≥n con el menor n√∫mero de asesinatos en general es "West", aunque hay dos estados que son outliers. Podemos buscarlo:
+La regiÛn con el menor n˙mero de asesinatos en general es "West", aunque hay dos estados que son outliers. Podemos buscarlo:
 ```{r}
 murders.west<-filter(murders,region=="West")
 murders.west[which.max(murders.west$total),]
-
 ```
 
-La regi√≥n con un mayor n√∫mero de asesinatos en general es "South"
+La regiÛn con un mayor n˙mero de asesinatos en general es "South"
 
 ## Ejercicio #1: dataset *babies*
 Utilizando el dataset "babies.txt"
+```{r}
+library(tidyverse)
+setwd("~/Downloads")
+babies <- read.delim("babies.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+View(babies)
+```
 
-1. Utilizando un scatterplot *plot()* encontrar si existe una relaci√≥n de alg√∫n tipo entre el peso al nacimiento de los beb√©s y la edad gestacional (en semanas)
+1. Utilizando un scatterplot *plot()* encontrar si existe una relaciÛn de alg˙n tipo entre el peso al nacimiento de los bebÈs y la edad gestacional (en semanas)
 
-2. Compara utilizando un boxplot la distribuci√≥n de los pesos al nacer de los ni√±os con madres fumadoras frente a aquellos con madres no fumadoras
+```{r}
+str(babies)
+plot(babies$gestation,babies$weight)
+#Como se ha visto que hay valores == 1000, que realmente son NaN, vamos a eliminarlos
+babies_clean <- babies %>%
+  filter(gestation < 999 & bwt < 999)
+plot(babies_clean$gestation, babies_clean$bwt, pch="*", col="red")
+```
 
-3. Explora usando un histograma la distribuci√≥n general de los pesos de los bebes.
+```{r}
+linear_reg <- lm(bwt~gestation, data = babies_clean)
+summary(linear_reg)
+```
 
+2. Compara utilizando un boxplot la distribuciÛn de los pesos al nacer de los niÒos con madres fumadoras frente a aquellos con madres no fumadoras
 
+```{r}
+boxplot(bwt ~ smoke, data=babies_clean)
+
+#Igualmente, se eliminan los 9 o NaN para smoke
+#Como se ha visto que hay valores == 1000, que realmente son NaN, vamos a eliminarlos
+babies_clean <- babies %>%
+  filter(gestation < 999 & bwt < 999 & smoke < 9)
+
+#Se realiza un nuevo boxplot con el filtrado
+boxplot(bwt ~ smoke, data=babies_clean)
+
+#Se calculan las medias para ambas
+babies_clean %>% group_by(smoke) %>% summarize(avg = mean(bwt))
+```
+
+3. Explora usando un histograma la distribuciÛn general de los pesos de los bebes.
+
+```{r}
+hist(babies_clean$bwt)
+```
 
 ## Sumarizando datos y detectando outliers
 
-Cuando tenemos muchos datos lo primero que solemos querer hacer es intentar resumir la informaci√≥n en un s√≥lo n√∫mero. En principio esto deber√≠a de darnos una idea acerca de algunas de las caracter√≠sticas importantes de nuestros datos. Que√© medidas de sumarizaci√≥n se nos ocurren? La media, la mediana, la desviaci√≥n estandar...ahora vamos a ver cuando usar cada una de ellas, cuando son y cuando no son informativas.
+Cuando tenemos muchos datos lo primero que solemos querer hacer es intentar resumir la informaciÛn en un sÛlo n˙mero. En principio esto deberÌa de darnos una idea acerca de algunas de las caracterÌsticas importantes de nuestros datos. QuÈ medidas de sumarizaciÛn se nos ocurren? La media, la mediana, la desviaciÛn estandar...ahora vamos a ver cu·ndo usar cada una de ellas, cu·ndo son y cu·ndo no son informativas.
 
-### Medidas de resumen param√©tricas: Media y desviaci√≥n standard
-Utilizando el ejemplo "babies.txt", calcular la media y la desviaci√≥n estandar para los peso de los bebes:
+### Medidas de resumen paramÈtricas: Media y desviaciÛn standard
+Utilizando el ejemplo "babies.txt", calcular la media y la desviaciÛn estandar para los peso de los bebes:
 ```{r}
-babies<-read.delim("Datasets/babies.txt",header=T,sep="\t")
+#Carlcular la media
 mean(babies$bwt)
+#Calcular la SD
 sqrt(var(babies$bwt))
+#O de manera directa
+sd(babies$bwt)
 ```
-Recordando c√≥mo era su distribuci√≥n (sim√©trica, un s√≥lo valor m√°s probable...) parece que estos valores son bastantes informativos acerca de estos datos
+**IMPORTANTE**: Recordando cÛmo era su distribuciÛn (simÈtrica, un sÛlo valor m·s probable...) parece que estos valores son bastantes informativos acerca de estos datos
 
-### Medidas de resumen no param√©tricas: Mediana, IQR
-Sin embargo, si miramos el histograma del total de asesinatos del ejemplo murder y calculamos los mismos par√°metros
+### Medidas de resumen no paramÈtricas: Mediana, IQR
+Sin embargo, si miramos el histograma del total de asesinatos del ejemplo murder y calculamos los mismos par·metros
 ```{r}
+library(dslabs)
+data(murders)
 hist(murders$total)
 mean(murders$total)
 sqrt(var(murders$total))
 ```
-Como veis estos dos valores nos harian pensar que hay numeros de asesinatos negativos en algunos estados, no nos da pistas acerca del numero mas habitual de asesinatos que encontramos y no podriamos saber que el numero de asesinatos es tan alto como 1400 en otros. Hay otros par√°metros para sumarizar datos que no siguen una distribuci√≥n "normal":
+Como veis estos dos valores nos harian pensar que hay numeros de asesinatos negativos en algunos estados, no nos da pistas acerca del numero mas habitual de asesinatos que encontramos y no podriamos saber que el numero de asesinatos es tan alto como 1400 en otros. Hay otros par·metros para sumarizar datos que no siguen una distribuciÛn "normal":
 ```{r}
+#La mediana
 median(murders$total)
+#EL rango intercuartÌlico
 IQR(murders$total)
 ```
-La mediana nos dice cual es el valor que deja el 50% de los datos a la izquierda de el y el 50% a su derecha. El IQR (Interquantile Range) nos da una idea de en que intervalo cae el 50% de los datos. Podemos calcular los quantiles de una distribucion usando:
+La **mediana** nos dice cual es el valor que deja el 50% de los datos a la izquierda de el y el 50% a su derecha. El **IQR** (Interquantile Range) nos da una idea de en que intervalo cae el 50% de los datos. Podemos calcular los quantiles de una distribucion usando:
 ```{r}
 summary(murders$total)
 summary(babies$bwt)
 ```
-Si un conjunto de datos es aproximadamente normal (sim√©trico, con un s√≥lo valor m√°s probable, etc) en ese caso la media y la mediana son muy parecidas, como en el caso del peso de los bebes. Sin embargo, cuando una distribuci√≥n no es parecida a una normal (murders$total) la media y la mediana son muy distintas y la media no suele ser muy informativa. Tampoco la desviaci√≥n estandard. El IQR se calcula como Q_3-Q_1. Todos los valores que esten alejados 1.5 veces el IQR del q1 o de q3 se consideran outliers:
+Si un conjunto de datos es aproximadamente normal (simÈtrico, con un sÛlo valor m·s probable, etc) en ese caso la media y la mediana son muy parecidas, como en el caso del peso de los bebes. Sin embargo, cuando una distribuciÛn no es parecida a una normal (murders$total) la media y la mediana son muy distintas y la media no suele ser muy informativa. Tampoco la desviaciÛn estandard. El IQR se calcula como Q_3-Q_1. Todos los valores que esten alejados 1.5 veces el IQR del q1 o de q3 se consideran outliers:
 ```{r}
 summary(murders$total)
 q1=quantile(murders$total, p=0.25)
@@ -253,49 +300,49 @@ which(murders$total<=r[1])
 which(murders$total>=r[2])
 murders[which(murders$total>=r[2]),]
 ```
-Hay otro tipo de outliers a√∫n m√°s lejanos que son los *far_out* outliers
+Hay otro tipo de outliers a˙n m·s lejanos que son los *far_out* outliers
 ```{r}
 r2 <- c(q1 - 3*iqr, q3 + 3*iqr)
 r2
 which(murders$total>=r2[2])
 murders[which(murders$total>=r2[2]),]
 ```
-Un tipo de plot que no hab√≠amos visto y que tambi√©n es muy informativo es el que compara los quantiles de nuestros datos con los de una distribucion normal:
+Un tipo de plot que no habÌamos visto y que tambiÈn es muy informativo es el que compara los quantiles de nuestros datos con los de una distribucion normal. Este es el **qqplot**. Si los datos se describen en la lÌnea, la distribuciÛn es normal. Como se puede ver este no es el caso:
 ```{r}
 qqnorm(murders$total)
 qqline(murders$total)
 ```
-Frente a esto, la distribuci√≥n de los pesos de los bebes tienen una distribuci√≥n mas o menos normal, con la excepci√≥n de que las colas son mas pesadas.
+Frente a esto, la distribuciÛn de los pesos de los bebes tienen una distribuciÛn mas o menos normal, con la excepciÛn de que las colas son mas pesadas.
 ```{r}
 qqnorm(babies$bwt)
 qqline(babies$bwt)
 ```
-Finalmente, para datos no normales hay otra medida que nos da una idea de la dispersi√≥n, la *mad*: median absolute deviation. Se trata de la suma de la distancia absoluta entre cada valor y la mediana. 
+Finalmente, para datos no normales hay otra medida que nos da una idea de la dispersiÛn, la *mad*: median absolute deviation. Se trata de la suma de la distancia absoluta entre cada valor y la mediana. 
 ```{r}
 mad(babies$bwt)
 mad(murders$total)
 ```
 
-## Ejercicio #2: Distribuci√≥n de las alturas de los estudiantes
-Recogemos la altura, el g√©nero y la edad de todos los miembros de la clase. 
+## Ejercicio #2: DistribuciÛn de las alturas de los estudiantes
+Recogemos la altura, el gÈnero y la edad de todos los miembros de la clase. 
 
 * Escribir los datos en un fichero y guardalo en tu directorio de trabajo con el nombre: "alturas.txt"
 * Leelo en R en el objeto "altura"
 * Haz un scatterplot que relacione la altura con la edad
 * Que distribucion tiene la altura? Y la edad? Cual seria la mejor forma de sumarizar la altura? Y la edad?
-* Haz un boxplot que muestre la distribuci√≥n de alturas en hombres frente a mujeres
+* Haz un boxplot que muestre la distribuciÛn de alturas en hombres frente a mujeres
 * Hay algun outlier?
 * Utilizando *dplyr* sumariza la altura de los hombres y de las mujeres por separado
-* quienes son los tres hombres mas altos de la clase? Y las tres mujeres m√°s j√≥venes?
+* quienes son los tres hombres mas altos de la clase? Y las tres mujeres m·s jÛvenes?
 
 # Visualizando datos con R: *ggplot2()*
-Hay otras librerias para visualizar datos en R, como por ejemplo las funciones de la instalacion base que ya hemos visto, *grid* o *lattice*. Sin embargo, ggplot2 se basa en la llamada *grammar of graphics*: al igual que bloques gramaticales b√°sicos permiten crear cientos de frases en *ggplot2* un peque√±o n√∫mero de comandos permite crear gr√°ficos muy distintos. 
+Hay otras librerias para visualizar datos en R, como por ejemplo las funciones de la instalacion base que ya hemos visto, *grid* o *lattice*. Sin embargo, ggplot2 se basa en la llamada *grammar of graphics*: al igual que bloques gramaticales b·sicos permiten crear cientos de frases en *ggplot2* un pequeÒo n˙mero de comandos permite crear gr·ficos muy distintos. 
 
-En particular, *ggplot2* est√° articulado sobre tres conceptos b√°sicos que tienen que definirse cada vez que vamos a plotear algo: **data**, **geometry** y **aesthetics**
+En particular, *ggplot2* est· articulado sobre tres conceptos b·sicos que tienen que definirse cada vez que vamos a plotear algo: **data**, **geometry** y **aesthetics**
 
 * Data:
 
-Los datos en *ggplot2()* tienen que estar en formato tidy. Ya hemos visto que esto significa que cada elemento a dibujar est√° indexado por un s√≥lo √≠ndice: el n√∫mero de la fila. Eso si, para cada elemento a representar podemos tener m√∫ltiples atributos. El data.frame *murders* es tidy porque cada estado aparece en una sola fila aunque hay varios atributos (region, total, population) para cada estado. Si en lugar de una foto fija tuvieramos una serie temporal cada combinacion (estado, a√±o) ser√≠a la "key" de la tabla y apareceria tambien una sola vez en la tabla en una fila. 
+Los datos en *ggplot2()* tienen que estar en formato tidy. Ya hemos visto que esto significa que cada elemento a dibujar est· indexado por un sÛlo Ìndice: el n˙mero de la fila. Eso si, para cada elemento a representar podemos tener m˙ltiples atributos. El data.frame *murders* es tidy porque cada estado aparece en una sola fila aunque hay varios atributos (region, total, population) para cada estado. Si en lugar de una foto fija tuvieramos una serie temporal cada combinacion (estado, aÒo) serÌa la "key" de la tabla y apareceria tambien una sola vez en la tabla en una fila. 
 
 * Geometry:
 
@@ -303,7 +350,7 @@ Queremos representar un scatterplot? Un histograma? Un boxplot?
 
 * Aesthetic Mapping:
 
-Que represento en el eje de las x? Que represento en el eje de las y? Que color uso? Que letra uso? Parte de estos par√°metros depender√°n de la geometr√≠a del plot. 
+Que represento en el eje de las x? Que represento en el eje de las y? Que color uso? Que letra uso? Parte de estos par·metros depender·n de la geometrÌa del plot. 
 
 ## Ejercicio 1: 
 Para el siguiente plot, describe los datos, la geometria y el aesthetic mapping.
@@ -311,17 +358,17 @@ Para el siguiente plot, describe los datos, la geometria y el aesthetic mapping.
 data(murders)
 
 p <-  murders %>% 
-  #Dentro de aes en ggplot pongo cu√°l es el eje x y cu√°l es el eje y.
-  #Esto no es suficiente para que nos lo muestre, ya que le falta a√±adirle la geometr√≠a
+  #Dentro de aes en ggplot pongo cu·l es el eje x y cu·l es el eje y.
+  #Con ggplot solo no es suficiente para que nos muestre el gr·fico, ya que le falta aÒadirle la geometrÌa indicando quÈ tipo queremos.
   #Con lablel=abb le pido que me ponga etiquetas
-  #Con el '+' indico que voy a a√±adir m√° cosas.
+  #Con el '+' indico que voy a aÒadir m· cosas.
   ggplot(aes(population/10^6, total, label = abb))+
-  #Aqu√≠ ya a√±adimos la geometr√≠a
-  #Con geom_point indico que quiero que sea un scatterplot y le digo que me los coloree por region y que el tama√±o de los puntos
-  #T√©cnciamente podr√≠a poner aqu√≠ debajo lo que puse en el aes de arriba de ggplot, pero es desaconsejable, ya que ponerlo en ggplot es como poner los mimbres y pemite reutilizarlo
+  #Con geom_point indico que quiero que sea un scatterplot y le digo que me los coloree por region y el tamaÒo de los puntos
+  #TÈcnciamente podrÌa poner aquÌ debajo lo que puse en el aes de arriba de ggplot, pero es desaconsejable, ya que ponerlo en ggplot es como poner los mimbres y pemite reutilizarlo
   geom_point(aes(col=region), size = 3) +  
   #Con geom_text le digo que me escriba las labels que puse en ggplot
-  geom_text(nudge_x = 0.05) + 
+  geom_text(nudge_x = 0.05) +
+  #AquÌ pido que me escale a base 10 el eje X y el eje Y
   scale_x_log10() +
   scale_y_log10() +
   xlab("Populations in millions (log scale)") + 
@@ -331,8 +378,7 @@ p <-  murders %>%
 p
 ```
 
-Puedo pedir que me ponga los tama√±os escalados al total:
-ara el siguiente plot, describe los datos, la geometria y el aesthetic mapping.
+Puedo pedir que me ponga los tamaÒos escalados al total:
 ```{r,warning=FALSE}
 data(murders)
 
@@ -366,6 +412,7 @@ Fijaos en la diferencia con:
 ```{r,warning=FALSE}
 
 p <-  murders %>% 
+  #AquÌ me colorea tambiÈn el texto y no solo los puntos, porque el 'col=region' est· en ggplot y no en geom_points
   ggplot(aes(population/10^6, total, label = abb,col=region))+
   geom_point(size = 3) +  
   geom_text(nudge_x = 0.05) + 
@@ -396,12 +443,13 @@ p
 
 ## Creando un plot con *ggplot2()*
 
-El primer paso es "inicializar" el plot dici√©ndole que datos queremos usar y algunas caracter√≠sticas b√°sicas de el. 
-```{r}
+El primer paso es "inicializar" el plot diciÈndole que datos queremos usar y algunas caracterÌsticas b·sicas de el. 
+```{r,echo=FALSE}
 ggplot(data = murders)
 #alternativamente con pipe:
 murders %>% ggplot()
 ```
+
 ```{r}
 p <- ggplot(data = murders)
 class(p)
@@ -411,37 +459,37 @@ p
 
 ## Geometria
 
-La geometr√≠a define el tipo de representaci√≥n de nuestros datos que estamos usando: c√≥mo se situan los valores en el plano o en el espacio.
+La geometrÌa define el tipo de representaciÛn de nuestros datos que estamos usando: cÛmo se situan los valores en el plano o en el espacio.
 
-Cada geometr√≠a necesita una serie de par√°metros fijos para poder pintar y otros opcionales
+Cada geometrÌa necesita una serie de par·metros fijos para poder pintar y otros opcionales
 
-Por ejemplo, un scatterplot con la funci√≥n *geom_point* requiere obligatoriamente los valores en x y en y. Adem√°s se le puede dar color, tama√±o, etc. 
+Por ejemplo, un scatterplot con la funciÛn *geom_point* requiere obligatoriamente los valores en x y en y. Adem·s se le puede dar color, tamaÒo, etc. 
 Queremos crear un scatterplot:
 ```{r}
 ? geom_point
 murders %>% ggplot() + 
   geom_point(aes(x = population/10^5, y = total))
 ```
-Hab√©is visto que hemos a√±adido la geometr√≠a al plot inicial usando *+*. As√≠ es como se concatenan las distintas capas de un plot
+HabÈis visto que hemos aÒadido la geometrÌa al plot inicial usando *+*. AsÌ es como se concatenan las distintas capas de un plot
 
 ## Aesthetics
 
-Cuando hacemos un gr√°fico estamos transformando nuestro datos en valores que componen el gr√°fico final. La iniciativa *grammar of graphics (gg)* lo que intenta es hacer esto de manera sistem√°tica sea cual sea el tipo de geometr√≠a que vamos a utilizar. 
+Cuando hacemos un gr·fico estamos transformando nuestro datos en valores que componen el gr·fico final. La iniciativa *grammar of graphics (gg)* lo que intenta es hacer esto de manera sistem·tica sea cual sea el tipo de geometrÌa que vamos a utilizar. 
 
-Con la funci√≥n *aes()* estamos tratando de asignar a valores de nuestros datos (de nuestro data frame *murders* en este caso)  a caracter√≠sticas cuantificables del gr√°fico. Estas caracter√≠sticas son las aesthetics. Da igual si se trata de un pie chart, de un scatterplot...al final ggplot2 lo que necesita es saber qu√© pone en cada dimensi√≥n (x,y) para gr√°ficos de dos dimensiones, (x,y,z) para gr√°ficos 3D, el color, la fuente de la letra...Necesita saber que valor pone en cada pixel de la pantalla y cuales son sus caracter√≠sticas. Esto es lo que tratamos de hacer con aes(): mapear valores en caracter√≠sticas de un gr√°fico
+Con la funciÛn *aes()* estamos tratando de asignar a valores de nuestros datos (de nuestro data frame *murders* en este caso)  a caracterÌsticas cuantificables del gr·fico. Estas caracterÌsticas son las aesthetics. Da igual si se trata de un pie chart, de un scatterplot...al final ggplot2 lo que necesita es saber quÈ pone en cada dimensiÛn (x,y) para gr·ficos de dos dimensiones, (x,y,z) para gr·ficos 3D, el color, la fuente de la letra...Necesita saber que valor pone en cada pixel de la pantalla y cuales son sus caracterÌsticas. Esto es lo que tratamos de hacer con aes(): mapear valores en caracterÌsticas de un gr·fico
 
-La funci√≥n *aes()* es la que le indica a la geometr√≠a que necesita pintar en el plot y c√≥mo. Adem√°s se le pueden dar muchas propiedades como color, tama√±o, etc, en funci√≥n de los datos. Cada geometr√≠a requiere un cierto tipo de mapeo datos/visualizaci√≥n. 
+La funciÛn *aes()* es la que le indica a la geometrÌa que necesita pintar en el plot y cÛmo. Adem·s se le pueden dar muchas propiedades como color, tamaÒo, etc, en funciÛn de los datos. Cada geometrÌa requiere un cierto tipo de mapeo datos/visualizaciÛn. 
 
 ### Global vs local aesthetics
 
-Las caracter√≠sticas est√©ticas de un gr√°fico pueden definirse de manera global al inicializar el plot. De esta forma cada nueva capa heredar√° estas caracter√≠sticas globales.
+Las caracterÌsticas estÈticas de un gr·fico pueden definirse de manera global al inicializar el plot. De esta forma cada nueva capa heredar· estas caracterÌsticas globales.
 
-Si le hubieramos pasado las est√©ticas al plot anterior no haria falta d√°rselas a geom_point utilizaria las del objeto ggplot2
+Si le hubieramos pasado las estÈticas al plot anterior no haria falta d·rselas a geom_point utilizaria las del objeto ggplot2
 ```{r}
 murders %>% ggplot(aes(x = population/10^5, y = total)) + 
   geom_point()
 ```
-Tambi√©n podr√≠amos a√±adir la capa con la geometr√≠a al objeto p
+TambiÈn podrÌamos aÒadir la capa con la geometrÌa al objeto p
 ```{r}
 p<-murders %>% ggplot(aes(x = population/10^6, y = total))
 
@@ -451,31 +499,31 @@ p+geom_point()
 
 ##Capas
 
-Los gr√°ficos en *ggplot2* se definen usando diferentes capas que se unen unas a otras usando *+*
+Los gr·ficos en *ggplot2* se definen usando diferentes capas que se unen unas a otras usando *+*
 
-Una vez que hemos creado un objeto *ggplot()* como antes le vamos a√±adiendo capas, la primera de ellas siempre es la geometria. Despu√©s podemos seguir a√±adiendo caracter√≠sticas.
+Una vez que hemos creado un objeto *ggplot()* como antes le vamos aÒadiendo capas, la primera de ellas siempre es la geometria. DespuÈs podemos seguir aÒadiendo caracterÌsticas.
 
-Otra capa que queremos a√±adir es texto para cada punto. Se utiliza la funci√≥n *geom_text()*
+Otra capa que queremos aÒadir es texto para cada punto. Se utiliza la funciÛn *geom_text()*
 ```{r}
 p+
   geom_point(aes(col=region))+
   geom_text(aes(label=state))
 
 ```
-Si queremos visualizar la abreviaci√≥n
+Si queremos visualizar la abreviaciÛn
 ```{r}
 p+
   geom_point(aes(col=region))+
   geom_text(aes(label=abb))
 ```
-Fuera de *aes()* no se reconocen las variables de los objetos para las que queremos mapear caracter√≠sticas est√©ticas
+Fuera de *aes()* no se reconocen las variables de los objetos para las que queremos mapear caracterÌsticas estÈticas
 
 ```{r error=TRUE}
 p_test <- p + 
   geom_text(label = abb)
 ```
 
-Cuando en una capa no se requiere ese mapeo dato-caracter√≠stica del plot podemos no usar la funci√≥n aes(), pero para ello tenemos que haber definido globalmente las caracter√≠sticas b√°sicas que necesita la funci√≥n:
+Cuando en una capa no se requiere ese mapeo dato-caracterÌstica del plot podemos no usar la funciÛn aes(), pero para ello tenemos que haber definido globalmente las caracterÌsticas b·sicas que necesita la funciÛn:
 ```{r}
 p<-murders %>% 
   ggplot(aes(x = population/10^6, 
@@ -519,7 +567,7 @@ murders %>%
   geom_text(col="blue")
 
 ```
-Cada funci√≥n requiere diferentes par√°metros unos que son *aesthetics* y otros fijos. La diferencia es que aesthetics mapea datos a propiedades est√©ticas (para uno o para todos los datos) mientras que lo que est√° fuera de *aes()* afecta a todo el plot, no hay un mapeo dato->est√©tica.
+Cada funciÛn requiere diferentes par·metros unos que son *aesthetics* y otros fijos. La diferencia es que aesthetics mapea datos a propiedades estÈticas (para uno o para todos los datos) mientras que lo que est· fuera de *aes()* afecta a todo el plot, no hay un mapeo dato->estÈtica.
 
 ```{r}
 p<-murders %>% ggplot()
@@ -573,7 +621,7 @@ p + geom_point(size = 3) +
   ggtitle("US Gun Murders in 2010")
 ```
 
-## Colores din√°micos que dependen de una variable
+## Colores din·micos que dependen de una variable
 ```{r}
 p<- murders %>% 
   ggplot(aes(x=population/10^5,
@@ -589,11 +637,11 @@ p<- murders %>%
 
 p+geom_point(aes(col=region),size=3)
 ```
-Los valores de x,y (las coordenadas) que precisa esta funci√≥n geom_point las hereda de lo que hemos ya definido en p. El mapping est√° en primera posici√≥n porque es lo que geom_point espera. 
+Los valores de x,y (las coordenadas) que precisa esta funciÛn geom_point las hereda de lo que hemos ya definido en p. El mapping est· en primera posiciÛn porque es lo que geom_point espera. 
 
-## A√±adiendo anotaciones
+## AÒadiendo anotaciones
 
-Si queremos a√±adir algo al plot que no est√° directamente asociado con el mapeo dato->est√©tica no necesitamos la funci√≥n *aes()*. Lo hac√≠amos antes a√±adiendo un texto en unas coordenadas fijas:
+Si queremos aÒadir algo al plot que no est· directamente asociado con el mapeo dato->estÈtica no necesitamos la funciÛn *aes()*. Lo hacÌamos antes aÒadiendo un texto en unas coordenadas fijas:
 
 ```{r}
 murders %>% 
@@ -605,7 +653,7 @@ murders %>%
   geom_label(x=10,y=800,label="Hello")
 ```
 
-Imaginemos que queremos a√±adir al plot una linea que tenga como pendiente el rate medio de asesinatos en USA. 
+Imaginemos que queremos aÒadir al plot una linea que tenga como pendiente el rate medio de asesinatos en USA. 
 
 Recordemos que usando dplyr podemos conseguir:
 ```{r}
@@ -613,7 +661,7 @@ r <- murders %>%
   summarize(rate = sum(total) /  sum(population) * 10^5) %>% 
   .$rate
 ```
-Le a√±adimos una linea con pendiente 1 e intercepta el log10 de ese ratio medio:
+Le aÒadimos una linea con pendiente 1 e intercepta el log10 de ese ratio medio:
 ```{r}
 p + 
   geom_point(aes(col=region), size = 3) + 
@@ -688,7 +736,7 @@ p3 <- p +
                  col="black")
 ```
 
-Podemos utilizar la funci√≥n `grid.arrange` in the __gridExtra__ package:
+Podemos utilizar la funciÛn `grid.arrange` in the __gridExtra__ package:
 
 ```{r gridextra-example, out.width='100%', fig.height=3}
 library(gridExtra)

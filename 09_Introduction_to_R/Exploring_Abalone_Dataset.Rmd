@@ -1,0 +1,164 @@
+---
+title: "Exploring Abalone Dataset"
+author: "Javier Moreno"
+date: "18 de febrero de 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Source: https://code.datasciencedojo.com/datasciencedojo/datasets/tree/master/Abalone
+
+## Exploring Abalone Dataset
+
+### Data Dictorionary
+Get more information on the source.
+Basically, rings +1.5 give the age in years
+
+##Importing the dataset from the .csv
+First of all, let's check the working directory and go to Documents:
+```{r}
+getwd()
+```
+
+Let's move to "Documents" folder:
+```{r}
+setwd("C:/Users/jmoreno7/Documents")
+```
+
+If we can't remember the name of the .csv, we can use RegEx:
+```{r}
+list.files(".", pattern="*.csv")
+```
+
+We will use 'tidyverse' for exploring data:
+```{r}
+library(tidyverse)
+```
+
+For importing data, we will use the `read_csv` function from tidyverse, althoguh `read.delim` or `read.csv` from base are also useful.
+
+```{r}
+dataset <- read_csv("Abalone.csv")
+```
+
+Let's do a first approach to the dataset
+
+```{r}
+#Let's cheack the heads
+head(dataset)
+#Let's check the data type
+str(datase)
+```
+
+The dataset doesn't contain header, so let's add it manually:
+```{r}
+dataset <- read_csv("Abalone.csv",col_names = c("sex","length","diameter", "height","whole_weight","shucked_Weight","viscera","shell","rings"))
+```
+
+Taking  alook on the dataset, variable 'sex' should be a factor. Should be changed:
+```{r}
+dataset$sex <- as_factor(dataset$sex)
+```
+
+Note that "I" means Infant
+
+We know that the age is the number of rings +1.5:
+
+```{r}
+df = dataset %>% mutate(age = rings + 1.5)
+```
+
+Our dataset has this dimensions:
+
+```{r}
+dim(df)
+```
+
+¿Do it have NaN values?
+
+```{r}
+summary(is.na.data.frame(df))
+```
+
+There are no NaN
+
+Let's get a first approach to the dataset:
+```{r}
+summary(df)
+```
+
+We are going to do a correlation matrix:
+
+```{r}
+dfcor <- cor(df, method="pearson")
+```
+
+We get an error because there are some values which are not numerical: sex, which is a factor. Let's remove sex.
+
+```{r}
+df_cor <- df %>% select(-sex)
+dfcor <- round(cor(df_cor, method = "pearson"), digits=2)
+```
+
+Let's take a look on the correlation numbers:
+
+```{r}
+dfcor
+```
+
+This is difficult to see. We will use the library `corrplot`
+```{r}
+library(corrplot)
+corrplot(dfcor)
+```
+
+Or in order to see it clearer, we can use this configuration:
+```{r}
+library(corrplot)
+corrplot(dfcor, method="number", type="upper")
+```
+
+```{r}
+library(PerformanceAnalytics)
+chart.Correlation(dfcor, histogram=TRUE)
+```
+
+We can take a lok about how sex affects on rings
+```{r}
+library(ggplot2)
+df %>% ggplot(aes(rings, color = sex)) +
+  geom_density()
+ 
+```
+
+```{r}
+df %>% ggplot(aes(x=sex, y=rings, color=sex)) +
+  geom_boxplot()
+ 
+```
+
+We can see there's no difference between number of rings and sex, despite the "infants"
+
+We can get information about the different groups using `purrr`, `split` by sex and `summary`.
+```{r}
+library(purrr)
+df %>% split(.$sex) %>% map(summary)
+```
+
+It shows there are odd data on Infants, showing that there are "Infants" woth an age over 22...
+
+```{r}
+df %>% ggplot(aes(x=age, y=length, col=sex)) +
+  geom_point()+
+  facet_grid(rows=vars(sex))
+```
+
+
+
+
+
+
+

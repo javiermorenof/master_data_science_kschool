@@ -1,5 +1,4 @@
 ###ESTADISTICA DESCRIPTIVA EJEMPLO1#######
-setwd("C:/Users/ernesto.correa/Dropbox/kschool_master/Ejercicios ")
 getwd()
 
 datos<- read.table("datos_eje1.txt", header = TRUE) #CARGAMOS LOS DATOS
@@ -7,16 +6,16 @@ datos
 
 #PREGUNTA
 #Realiza una tabla de frecuencias absolutas y otra de frecuencias relativas para la variable Calificacion. 
-#Almacena las tablas anteriores en dos variables y llámalas absolutas y relativas.
+#Almacena las tablas anteriores en dos variables y ll?malas absolutas y relativas.
 
 #SOLUCION
 
-#Calculamos las frecuencias absolutas usamos la función table() 
+#Calculamos las frecuencias absolutas usamos la funci?n table() 
 absolutas <- table(datos$Calificacion)
 absolutas
 
 
-#Calculamos las frecuencias relativas usamos la función prop.table() "note que primero se deben calcular las frecuencias absolutas"
+#Calculamos las frecuencias relativas usamos la funci?n prop.table() "note que primero se deben calcular las frecuencias absolutas"
 relativas <- prop.table(absolutas)
 relativas
 
@@ -37,7 +36,7 @@ boxplot(datos$Edad, range = 1.5)
 boxplot(datos$Edad, range = 0.5)        #cambio del alargamiento de los bigotes
 boxplot(formula = Edad ~ Calificacion, data =  datos)
 
-#Medidas de posición
+#Medidas de posici?n
 summary(datos$Puntuacion)
 
 #Por separado
@@ -70,7 +69,7 @@ sort(datos$Edad, decreasing = FALSE)
 #CRECIENTE
 sort(datos$Edad, decreasing = TRUE)
 
-#Medidas de dispersión
+#Medidas de dispersi?n
 #Rango 
 
 M<-max(datos$Puntuacion)
@@ -82,7 +81,8 @@ V<-var(datos$Edad, y=NULL, na.rm = FALSE)
 s<-sd(datos$Edad, na.rm = TRUE)
 V
 s
-#Coeficiente de variación
+#Coeficiente de variaci?n
+#Hay una regla no escrita que dice que los datos que estÂ´an entre 0 y 0.5 tienen un buen coeficiente de variaciÃ³n.
 media<-mean(datos$Edad)
 CV_Edad <- s/media
 CV_Edad
@@ -90,7 +90,7 @@ CV_Edad
 #Medidas de Forma
 #coeficiente de asimetria
 
-install.packages("e1071")   # Es necesario si aún no se ha instalado
+install.packages("e1071")   # Es necesario si a?n no se ha instalado
 library(e1071)
 skewness(datos$Edad)
 

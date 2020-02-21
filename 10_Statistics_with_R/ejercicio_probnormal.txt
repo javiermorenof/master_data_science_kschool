@@ -1,0 +1,81 @@
+En unos estudios realizados a un determinado tipo de aves rapaces. Se comprueba que la longitud de las alas extendidas, X,
+es una variable aleatoria que se distribuye aproximadamente según una curva Normal, de media 110 cm. y desviación típica 4 cm.
+Elegida un ave al azar y suponiendo que las longitudes se distribuyen normalmente, calcular:
+
+a) La probabilidad de que la longitud de las alas esté comprendida entre 110 y 115 cm.
+
+b) La probabilidad de que la longitud de las alas sea mayor que 105 cm.
+
+c) La probabilidad de que la longitud de las alas sea menor de 100 cm.
+
+d) La longitud mínima  del 20% de las alas que más miden
+
+e) Quince longitudes aleatorias que sigan dicha distribución.
+
+Solución
+En primer lugar, vamos a definir la variable aleatoria X. Por el enunciado del problema, sabemos que X ? N(110, 4)
+
+a) La probabilidad de que la longitud de las alas esté comprendida entre 110 y 115 cm.
+
+En este primer apartado, nos piden calcular P[110 = X = 115] . Esta probabilidad puede reescribirse como
+
+P[110 = X =  115] = P[X = 115] – P[ X =  110] = F(115) – F(110)
+
+es decir, como una diferencia de valores de la función de distribución de la variable. Vamos a utilizar la función pnorm para obtener estos valores, de manera que la diferencia entre ambos nos dará la probabilidad que buscamos.
+
+> pnorm(c(115, 110), mean = 110, sd = 4)
+[1] 0.8943502  0.5000000
+> 0.8943502 – 0.5000000
+[1] 0.3943502
+
+Por lo que podemos concluir que P[110 = X =  115] = 0.3943502 .
+
+b) La probabilidad de que la longitud de las alas sea mayor que 105 cm.
+
+En este caso, la probabilidad que tenemos que obtener es P[X > 105]. Esta probabilidad es equivalente a
+
+P[X > 105] = 1 – P[X = 105] = 1 – F(105)
+
+por lo que también puede calcularse a partir de un valor de la función de distribución. Usemos, de nuevo,
+la función pnorm para calcular este valor de la función de distribución y así obtener la probabilidad buscada.
+
+> pnorm(105, mean = 110, sd = 4)
+[1] 0.1056498
+> 1- 0.1056498
+[1] 0.8943502
+
+La probabilidad de que la longitud de las alas sea mayor que 105 cm. es 0.8943502.
+
+c) La probabilidad de que la longitud de las alas sea menor de 100 cm.
+
+La probabilidad de que la longitud de las alas sea 100 cm. o menos se puede escribir como P[X =  100] = F(100). Esto es, la probabilidad coincide con el valor de la función de distribución evaluada en el punto 100.
+
+> pnorm(100, mean = 110, sd = 4)
+[1] 0.006209665
+
+De manera que P[X = 100] = 0.006209665
+
+d) La longitud mínima  del 20% de las alas que más miden
+
+Para entender qué valor debemos calcular, veamos el siguiente gráfico:
+
+Gráfico 1: Representación del percentil 80 en la recta real
+
+Suponiendo que la recta azul representa los valores de la variable ordenados de menos a mayor, buscamos el 20% de los valores más grandes de la variable (que estarán situados a la derecha). El mínimo de estos valores (representado con un punto rojo) será aquel valor que deje a su derecha el 20% de las observaciones. Pero este punto será también aquel que deja a su izquierda el 80% de las observaciones restantes. Por tanto, el valor que debemos calcular es el percentil 80. Utilizaremos para ello la función qnorm.
+
+> qnorm(0.8, mean = 110, sd = 4)
+[1] 113.3665
+
+La longitud que buscamos es 113.3665 cm.
+
+e)  Quince longitudes aleatorias que sigan dicha distribución.
+
+Vamos a generar estos 15 longitudes aleatorias usando la función rnorm.
+
+> rnorm(15, mean = 110, sd = 4)
+[1] 109.8886 111.8642 111.4913 111.5209 110.0206 107.9751 116.2190
+[8] 111.7862 105.5341 107.6144 111.2416 111.1966 105.9855 106.4936
+[15] 116.0270
+
+Nota: Dado el carácter aleatorio de los valores generados en este apartado, 
+dichos valores pueden no coincidir con los que se obtengan a través de otra llamada a la función rnorm.

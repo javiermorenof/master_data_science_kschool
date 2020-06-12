@@ -16,6 +16,10 @@ If you'd rather use `conda`, check the documentation, but the following should w
     conda create -n nlp python=3.7 anaconda
     source activate nlp
 
+After this, you have to create the kernel:
+
+    python -m ipykernel install --user --name=nlp
+
 Then, you can disable the current virtual environment with the
 following command:
 
@@ -24,6 +28,8 @@ following command:
 Or:
 
     conda deactivate
+
+
 
 ## `nltk`
 

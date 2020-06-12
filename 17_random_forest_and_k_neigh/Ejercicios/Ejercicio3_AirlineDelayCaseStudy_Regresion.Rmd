@@ -1,0 +1,169 @@
+---
+title: "AirlineDelay"
+output: html_document
+Objetivo: Predecir el retraso en los vuelos
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(MASS)
+library(caret)
+```
+
+## Carga de Datos
+
+Se trata del conocido dataset del `Sacramento`:
+
+```{r}
+
+```
+
+En este caso, realizamos la separación de los dataset de train y test antes del análisis exploratorio para poder realizar este análisis de ambos dataset generados
+```{r}
+
+```
+
+
+## Análisis Exploratorio
+
+Analizamos el dataset original Sacramento
+```{r}
+
+```
+
+Analizamos los dataset de train y test
+```{r}
+
+```
+
+Otros análisis
+
+Mostrar TotalDelay distribution
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+Mostrar TotalDelay vs HistoricallyLate
+```{r}
+
+```
+
+Otro tipo de visualizaciones
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+Otras visualizaciones, teniendo en cuenta que para variables categóricas es mejor usar boxplots
+```{r}
+
+```
+
+```{r}
+
+```
+
+##Preprocesado del dataset
+
+No es necesario hacer preprocesado en este dataset
+
+##Modelización
+
+Crea un primer modelo, que sea una regresión múltiple con las variables OriginAvgWind, OriginPrecip, DestAvgWind, DestPrecip, HistoricallyLate,y de la variable OriginPrecip a la DestPrecip. Haz un summary
+```{r}
+
+```
+
+```{r}
+
+```
+
+Elabora predicciones, haciendo uso de este primer modelo, con la función predict en test
+```{r}
+
+```
+
+
+```{r}
+
+```
+
+Crea un segundo modelo, que sea regresión múltiple con todas las variables, en la que la variable objetivo sea log(TotalDelay+10)
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+Muestra un gráfico "Linear Regression Observed VS Predicted"
+```{r}
+
+```
+
+```{r}
+
+```
+
+
+Crea un tercer modelo, utilizando el modelo de Random Forest
+```{r}
+
+```
+
+
+```{r}
+
+```
+
+Elabora predicciones, haciendo uso de este último modelo, con la función predict en test 
+```{r}
+
+```
+
+```{r}
+
+```
+
+Visualiza el resultado en un gráfico "RF Regression Observed VS Predicted"
+```{r}
+
+```
+
+Crea un cuarto modelo, con Random Forest, y prueba a tunear el modelo para encontrar la mejor precisión
+
+```{r}
+
+```
+
+
+Prueba a tunear un modelo con Grid Search
+
+```{r}
+
+```
+
+Prueba a tunear un modelo manualmente
+
+```{r}
+
+```
+

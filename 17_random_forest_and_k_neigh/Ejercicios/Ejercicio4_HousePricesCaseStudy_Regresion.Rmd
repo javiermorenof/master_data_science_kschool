@@ -1,0 +1,183 @@
+---
+title: "House Prices Case Study"
+output: html_document
+Fuente: https://github.com/topepo
+Objetivo: Desarrollar un modelo analítico para predecir el precio final de las casas en Sacramento, CA
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggmap)
+library(mice)
+library(tidyverse)
+library(caret)
+```
+
+## Carga de Datos
+
+Se trata del conocido dataset del `Sacramento`:
+
+```{r titanic}
+
+```
+
+En este caso, realizamos la separación de los dataset de train y test antes del análisis exploratorio para poder realizar este análisis de ambos dataset generados
+```{r titanic}
+
+```
+
+
+## Análisis Exploratorio
+
+Analizamos el dataset original Sacramento
+```{r}
+
+```
+
+Visualizamos el número de registros de los dataset de train y test
+```{r}
+
+```
+
+Otros análisis
+
+Mostrar Prize vs Size
+
+```{r}
+
+```
+
+Mostrar Prize vs Size, en este caso para x=log(sqft)
+
+```{r}
+
+```
+
+Haz otros tipos de análisis y visualizaciones
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+##Preprocesado del dataset
+
+Los missing values son especialmente peligrosos si se encuentran en el dataset de test
+Si tiene algunos NAs en una variables, elimínalos
+Si por el contrario, tienes muchos NAs en una variable, elimina la variable
+Algunas veces, conviene reemplazar estos NAs por la media o la mediana
+Y por supuesto, utiliza el sentido común para aplicar estas normas
+
+En este caso, vamos a realizar ingeniería de variables:
+Revisar como beds, baths y sqft están correlacionadas
+```{r}
+
+```
+
+Para las variables beds y baths crear combinaciones
+```{r}
+
+```
+
+##Modelización
+
+Crea un primer modelo, que sea una regresión lineal con la variable sqft. Haz un summary
+```{r}
+
+```
+
+Crea un un segundo modelo, que sea una regresión múltiple con la variable beds,baths,sqft,type,latitude,longitude. Haz un summary
+```{r}
+
+```
+
+Cada modelo puede ser tuneado y evaluado. En este caso, utiliza 4 repeticiones un cross validation de 5 particiones
+```{r}
+
+```
+
+Crear 2 modelos con distintas variables para probar su rendimiento
+```{r}
+
+```
+
+Crear un dataframe con los predictores (prices in logs)
+```{r}
+
+```
+
+Elabora predicciones, haciendo uso de este último modelo, con la función predict en test
+Analízalo con la métrica RMSE
+```{r}
+
+```
+
+Crea un tercer modelo denominado knn_tune, con el algoritmo k-vecinos (kknn)
+```{r}
+
+```
+
+```{r}
+
+```
+
+Elabora predicciones, haciendo uso de este último modelo, con la función predict en test 
+```{r}
+
+```
+
+```{r}
+
+```
+
+Visualiza el resultado en un gráfico "RF Regression Observed VS Predicted"
+```{r}
+
+```
+
+
+Crea un cuarto modelo denominado rf_tune, con el algoritmo Random Forest
+```{r}
+
+```
+
+```{r}
+
+```
+
+Elabora predicciones, haciendo uso de este último modelo, con la función predict en test 
+```{r}
+
+```
+
+```{r}
+
+```
+
+Visualiza el resultado en un gráfico "RF Regression Observed VS Predicted"
+```{r}
+
+```
+

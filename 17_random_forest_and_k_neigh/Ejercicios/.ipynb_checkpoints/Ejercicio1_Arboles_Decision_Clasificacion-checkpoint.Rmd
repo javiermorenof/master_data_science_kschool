@@ -1,0 +1,146 @@
+---
+title: "Ejemplo Titanic"
+output: html_document
+---
+
+## Carga de Datos
+
+Se trata del conocido dataset del `titanic`:
+
+```{r titanic}
+
+```
+
+## Análisis Exploratorio
+
+```{r}
+
+```
+
+Imputaremos a la mediana algunos valores faltantes de `Age`:
+
+```{r}
+
+```
+
+Algunos plots:
+
+```{r}
+
+```
+
+Extrae algunas conclusiones de las anteriores gráficas o de un análisis exploratorio más detallado, si lo consideras conveniente.
+
+## Preprocesado del Dataset
+
+Consideramos la variable `Survived` como variable objetivo y conviértela a factor:
+
+```{r}
+
+```
+
+Trataremos `Sex` como factor y `Pclass` como factor ordenado
+
+```{r}
+ 
+```
+
+
+## Modelización
+
+Creamos Training y Test, 70% y 30% del dataset titanic, utilizando createDataPartition en la variable Survived. Hemos establecido un valor fijo de la semilla (set.seed = 23) como referencia.
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+A partir de ahora solo utilizaremos la partición de training para el ajuste y validación de los modelos.
+
+Ajusta un primer modelo glm de regresión logística con las variables Sex, PClass, Fare y Age
+Haz un summary
+
+```{r, eval =FALSE}
+
+```
+
+Usaremos factores no ordenados:
+
+```{r}
+
+```
+
+Plantea el nuevo modelo con un árbol de decisión.
+Para este primer modelo plantea un dataset más reducido, con la variable `FClass`, que refleja si los pasajeros eran de primera clase, además de las variables Sex y Age.
+
+```{r}
+
+```
+
+Crea el primer Árbol de Decisión con las variables Sex y Age
+
+```{r}
+
+```
+
+Plantea un segundo modelo añadiendo algunas variables
+```{r}
+
+```
+
+Elabora predicciones, haciendo uso de este último modelo, con la función predict en titanic_test
+
+```{r}
+
+```
+
+## Análisis de los resultados
+
+Crear una visualización del árbol de decisión
+
+```{r}
+
+```
+
+
+Calcular la matriz de confusión
+
+```{r}
+
+```
+
+
+Esta es la matriz de confusión.
+
+
+¿Cuál es el accuracy?
+```{r}
+
+```
+
+¿Cuál es la tasa de verdaderos positivos (TPR)?
+```{r}
+
+```
+
+¿Cuál es la Sensibilidad o Hit Rate?
+```{r}
+
+```
+
+¿Cuál es la tasa de falsos positivos (FPR) o False Alarm?
+```{r}
+
+```
+
+¿Cuál es la Especificidad?
+ 
+
+```{r}
+
+```
+
+

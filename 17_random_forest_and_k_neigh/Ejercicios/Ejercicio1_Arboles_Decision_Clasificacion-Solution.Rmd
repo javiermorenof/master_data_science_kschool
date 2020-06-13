@@ -3,13 +3,17 @@ title: "Ejemplo Titanic"
 output: html_document
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
 ## Carga de Datos
 
 Se trata del conocido dataset del `titanic`:
 
 ```{r titanic}
 data_path <- 'titanic.csv'
-titanic <- read.csv(data_path, header =T , stringsAsFactors = F, encoding='utf-8')
+titanic <- read.csv(data_path, header = T, stringsAsFactors = F, encoding = 'utf-8')
 ```
 
 ## Análisis Exploratorio
@@ -23,7 +27,7 @@ summary(titanic)
 Imputaremos a la mediana algunos valores faltantes de `Age`:
 
 ```{r}
-titanic$age[is.na(titanic$Age)] <- median(titanic$Age, na.rm=T)
+titanic$Age[is.na(titanic$Age)] <- median(titanic$Age, na.rm = T)
 ```
 
 Algunos plots:
@@ -33,9 +37,9 @@ library(ggplot2)
 
 ggplot(data = titanic, aes(x = Sex, fill = factor(Survived))) + geom_bar(position = 'fill')
 ggplot(data = titanic, aes(x = Pclass, fill = factor(Survived))) + geom_bar(position = 'fill')
+ggplot(data = titanic, aes(x = Fare, fill = factor(Survived))) + geom_density() + facet_grid(Survived ~ .)
+ggplot(data = titanic, aes(x = Age, fill = factor(Survived))) + geom_density() + facet_grid(Survived ~ .)
 
-ggplot(data = titanic, aes(x = Fare, fill = factor(Survived))) + geom_density() + facet_grid(Survived ~ . )
-ggplot(data = titanic, aes(x = Age, fill = factor(Survived))) + geom_density() + facet_grid(Survived ~ . )
 ```
 
 Extrae algunas conclusiones de las anteriores gráficas o de un análisis exploratorio más detallado, si lo consideras conveniente.
@@ -52,7 +56,8 @@ Trataremos `Sex` como factor y `Pclass` como factor ordenado
 
 ```{r}
 titanic$Sex <- as.factor(titanic$Sex)
-titanic$Pclass <- as.ordered(titanic$Pclass)
+
+titanic$Pclass <- as.ordered(titanic$Pclass) 
 ```
 
 
@@ -69,29 +74,26 @@ head(trainIndex)
 ```
 
 ```{r}
-library(lattice)
-
 titanic_training <- titanic[trainIndex,]
 titanic_test <- titanic[-trainIndex,]
 ```
 
 A partir de ahora solo utilizaremos la partición de training para el ajuste y validación de los modelos.
 
-Ajusta un primer modelo glm de regresión logística con las variables Sex, PClass, Fare y Age
-Haz un summary
+Ajusta un primer modelo glm de regresión logística con las variables Sex, PClass, Fare y Age haz un summary
 
 ```{r, eval =FALSE}
 Primer_modelo <- glm(Survived ~ Sex + Pclass + Fare + Age,
-                     data = titanic_training,
-                     family =  binomial(link = 'logit'))
+                   data = titanic_training,
+                   family = binomial(link = 'logit'))
 
 summary(Primer_modelo)
 ```
 
-Usaremos factores no ordenados:
+Por simplicidad usaremos factores no ordenados:
 
 ```{r}
-titanic_Pclass_unord <- factor(titanic$Pclass, ordered= FALSE)
+titanic$Pclass_unord <- factor(titanic$Pclass, ordered = FALSE)
 
 titanic_training <- titanic[trainIndex,]
 titanic_test <- titanic[-trainIndex,]
@@ -106,12 +108,11 @@ titanic_training <- titanic[trainIndex,]
 titanic_test <- titanic[-trainIndex,]
 ```
 
-Crea el primer Árbol de Decisión con las variables Sex y Age
-
 ```{r}
 library(rpart)
 
 Primer_Arbol_Decision <- rpart(formula = Survived ~ Sex + Age, data = titanic_training)
+
 
 Primer_Arbol_Decision
 ```
@@ -119,64 +120,62 @@ Primer_Arbol_Decision
 Plantea un segundo modelo añadiendo algunas variables
 ```{r}
 library(rpart)
-
-Segundo_Arbol_Decision <- rpart(formula = Survived ~ Sex + Age + Fare + Fclass,
-                                data = titanic_training)
+Segundo_Arbol_Decision <-rpart(formula = Survived ~ Sex + Age + Fare + Fclass, data = titanic_training)
 
 Segundo_Arbol_Decision
+```
+```{r}
+library(rpart.plot)
+rpart.plot(Segundo_Arbol_Decision)
+
 ```
 
 Elabora predicciones, haciendo uso de este último modelo, con la función predict en titanic_test
 
 ```{r}
-library(rpart.plot)
-rpart.plot(Primer_Arbol_Decision)
-```
-
-## Análisis de los resultados
-
-Crear una visualización del árbol de decisión
-
-```{r}
+prediccion_1 <- predict(Segundo_Arbol_Decision, newdata = titanic_test, type = "class")
 
 ```
-
 
 Calcular la matriz de confusión
-
 ```{r}
+library(caret)
+confusionMatrix(prediccion_1, titanic_test[["Survived"]])
 
 ```
-
-
 Esta es la matriz de confusión.
 
 
 ¿Cuál es el accuracy?
 ```{r}
-
+acc <- (138+70)/(138+70+32+26)
+acc
 ```
 
 ¿Cuál es la tasa de verdaderos positivos (TPR)?
 ```{r}
-
+TPR <-  70/(70+26) 
+TPR
 ```
 
 ¿Cuál es la Sensibilidad o Hit Rate?
 ```{r}
-
+Sens <- TPR 
+Sens
 ```
 
 ¿Cuál es la tasa de falsos positivos (FPR) o False Alarm?
 ```{r}
-
+FPR <-  32/(138 + 32)# = (0,TRUE) / ((0, FALSE)+(0, TRUE))
+FPR
 ```
 
 ¿Cuál es la Especificidad?
  
 
 ```{r}
-
+Spec <- 1 - FPR 
+Spec
+TNR <- Spec 
+TNR
 ```
-
-

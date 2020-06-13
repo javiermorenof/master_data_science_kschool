@@ -1,0 +1,138 @@
+---
+title: "AirlineDelay"
+output: html_document
+Objetivo: Predecir el retraso en los vuelos
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(MASS)
+library(caret)
+```
+
+## Carga de Datos
+
+Se trata del conocido dataset del `Sacramento`:
+
+```{r}
+
+```
+
+
+Lo primero que tenemos que hacer es convertir la variable objetivo en factor, ya que es una variable numérica y nuestro objetivo es realizar un ejercicio de clasificación:
+
+```{r titanic}
+
+```
+
+En este caso, realizamos la separación de los dataset de train y test antes del análisis exploratorio para poder realizar este análisis de ambos dataset generados
+```{r}
+
+```
+
+
+## Análisis Exploratorio
+
+Analizamos el dataset original Sacramento
+```{r}
+
+```
+
+Analizamos los dataset de train y test
+```{r}
+
+```
+
+Otros análisis
+
+Mostrar TotalDelay distribution
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+Mostrar TotalDelay vs HistoricallyLate
+```{r}
+
+```
+
+Otro tipo de visualizaciones
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+Otras visualizaciones, teniendo en cuenta que para variables categóricas es mejor usar boxplots
+```{r}
+
+```
+
+```{r}
+
+```
+
+¿Qué número de vuelos no tienen retraso, o tienen un retraso menor, y mayor?
+```{r}
+
+```
+
+¿Y por ruta?
+```{r}
+
+```
+
+
+##Preprocesado del dataset
+
+No es necesario realizar preprocesado en este dataset
+
+##Modelización
+
+Crea un primer modelo, que sea una regresión logística para la variable HistoricallyLate. Haz un summary
+```{r}
+
+```
+
+```{r}
+
+```
+
+Elabora predicciones, haciendo uso de este último modelo, con la función predict en test
+```{r}
+
+```
+
+Mostrar la matriz de confusion
+```{r}
+
+```
+
+
+```{r}
+
+```
+
+Crea un tercer modelo aplicando cross validation y el modelo Random Forest
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```

@@ -1,0 +1,229 @@
+---
+title: "AirlineDelay"
+output: html_document
+Objetivo: Predecir el retraso en los vuelos
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(MASS)
+library(caret)
+```
+
+## Carga de Datos
+
+Se trata del dataset: `AirlineDelay`:
+
+```{r}
+Airlines <- read.csv("AirlineDelay.csv")
+```
+
+En este caso, realizamos la separación de los dataset de train y test antes del análisis exploratorio para poder realizar este análisis de ambos dataset generados
+```{r}
+spl = createDataPartition(Airlines$TotalDelay, p = 0.8, list = FALSE)  # 80% for training
+
+AirlinesTrain = Airlines[spl,]
+AirlinesTest = Airlines[-spl,]
+```
+
+
+## Análisis Exploratorio
+
+Analizamos el dataset original Airlines
+```{r}
+names(AirlinesTrain)
+dim(AirlinesTrain)
+summary(AirlinesTrain)
+```
+
+Analizamos los dataset de train y test
+```{r}
+str(AirlinesTrain)
+str(AirlinesTest)
+```
+
+Otros análisis
+
+Mostrar TotalDelay distribution
+
+```{r}
+ggplot(AirlinesTrain, aes(TotalDelay)) + geom_density(fill="lightblue") + 
+  xlab("TotalDelay") +
+  ggtitle("TotalDelay distribution")
+```
+
+```{r}
+ggplot(AirlinesTrain, aes(log(TotalDelay+10))) + geom_density(fill="lightblue") + 
+  xlab("log(TotalDelay+10)") +
+  ggtitle("TotalDelay distribution")
+```
+
+Mostrar TotalDelay vs HistoricallyLate
+```{r}
+ggplot(AirlinesTrain, aes(x=HistoricallyLate, y=log(TotalDelay+10))) +
+  ylab("TotalDelay") + 
+  geom_point(alpha=0.8) +
+  ggtitle("TotalDelay vs HistoricallyLate")
+```
+
+Otro tipo de visualizaciones
+```{r}
+ggplot(AirlinesTrain, aes(log(TotalDelay+10))) + geom_density(aes(group=Flight, colour=Flight, fill=Flight), alpha=0.1) + 
+  xlab("log(TotalDelay+10)") +
+  ggtitle("TotalDelay distribution")
+```
+
+```{r}
+ggplot(AirlinesTrain, aes(log(TotalDelay+10))) + geom_density(aes(group=Carrier, colour=Carrier, fill=Carrier, alpha=0.1)) + 
+  xlab("log(TotalDelay+10)") +
+  ggtitle("TotalDelay distribution")
+```
+
+```{r}
+ggplot(AirlinesTrain, aes(x=as.factor(NumPrevFlights), y=log(TotalDelay+10))) +
+  geom_boxplot(fill="blue") +
+  ggtitle("TotalDelay vs NumPrevFlights")
+```
+
+Otras visualizaciones, teniendo en cuenta que para variables categóricas es mejor usar boxplots
+```{r}
+featurePlot(x = AirlinesTrain[, c(9:16)],
+            y = log(AirlinesTrain$TotalDelay+10),
+            plot = "scatter",
+            layout = c(4, 2))
+```
+
+```{r}
+featurePlot(x = AirlinesTrain[, c(17:22)],
+            y = log(AirlinesTrain$TotalDelay+10),
+            plot = "scatter",
+            layout = c(2, 3))
+```
+
+##Preprocesado del dataset
+
+No es necesario hacer preprocesado en este dataset
+
+##Modelización
+
+Crea un primer modelo, que sea una regresión múltiple con las variables OriginAvgWind, OriginPrecip, DestAvgWind, DestPrecip, HistoricallyLate,y de la variable OriginPrecip a la DestPrecip. Haz un summary
+```{r}
+Primer_Modelo_linFit <- lm(log(TotalDelay+10) ~ OriginAvgWind + OriginPrecip + DestAvgWind + DestPrecip + HistoricallyLate + OriginPrecip:DestPrecip, data=AirlinesTrain)
+```
+
+```{r}
+summary(Primer_Modelo_linFit)
+```
+
+Elabora predicciones, haciendo uso de este primer modelo, con la función predict en test
+```{r}
+prLM <- predict(Primer_Modelo_linFit, newdata=AirlinesTest)
+cor(log(AirlinesTest$TotalDelay+10), prLM)^2
+```
+
+
+```{r}
+ctrl <- trainControl(method = "repeatedcv", 
+                     repeats = 4,
+                     number = 5)
+
+test_results <- data.frame(TotalDelay = log(AirlinesTest$TotalDelay+10))
+observed = log(AirlinesTest$TotalDelay+10)
+```
+
+Crea un segundo modelo, que sea regresión múltiple con todas las variables, en la que la variable objetivo sea log(TotalDelay+10)
+```{r}
+Segundo_Modelo_lm_tune <- train(log(TotalDelay+10) ~ ., data = AirlinesTrain, 
+                 method = "lm", 
+                 trControl = ctrl)
+```
+
+```{r}
+summary(Segundo_Modelo_lm_tune)
+```
+
+```{r}
+test_results$lm <- predict(Segundo_Modelo_lm_tune, AirlinesTest)
+postResample(pred = test_results$lm,  obs = observed)
+```
+
+Muestra un gráfico "Linear Regression Observed VS Predicted"
+```{r}
+qplot(observed, test_results$lm) +
+  lims(x = c(2, 6), y = c(2, 6)) +
+  geom_abline(intercept = 0, slope = 1, colour = "blue") +
+  ggtitle("Linear Regression Observed VS Predicted")
+```
+
+```{r}
+ModelF <- (TotalDelay+10) ~ .
+```
+
+
+Crea un tercer modelo, utilizando el modelo de Random Forest
+```{r}
+Tercer_Modelo_rf_tune <- train(ModelF, data = AirlinesTrain,
+                 method = "rf",
+                 trControl = ctrl,
+                 ntree = 10,
+                 tuneGrid = expand.grid(mtry = c(1:11)), 
+                 verbose = FALSE)
+```
+
+
+```{r}
+plot(Tercer_Modelo_rf_tune)
+```
+
+Elabora predicciones, haciendo uso de este último modelo, con la función predict en test 
+```{r}
+test_results$rf <- predict(Tercer_Modelo_rf_tune, AirlinesTest)
+```
+
+```{r}
+postResample(pred = test_results$rf,  obs = test_results$TotalDelay)
+```
+Crea un cuarto modelo, con Random Forest, y prueba a tunear el modelo para encontrar la mejor precisión
+
+```{r}
+control <- trainControl(method="repeatedcv", number=5, repeats=3)
+seed <- 7
+metric <- "RMSE"
+set.seed(seed)
+mtry <- sqrt(ncol(AirlinesTrain))
+tunegrid <- expand.grid(.mtry=mtry)
+rf_default <- train(TotalDelay~., data=AirlinesTrain, method="rf", metric=metric, tuneGrid=tunegrid, trControl=control)
+print(rf_default)
+```
+
+
+Prueba a tunear un modelo con Grid Search
+
+```{r}
+control <- trainControl(method="repeatedcv", number=10, repeats=3, search="grid")
+set.seed(seed)
+tunegrid <- expand.grid(.mtry=c(1:15))
+rf_gridsearch <- train(TotalDelay~., data=AirlinesTrain, method="rf", metric=metric, tuneGrid=tunegrid, trControl=control)
+print(rf_gridsearch)
+plot(rf_gridsearch)
+```
+
+Prueba a tunear un modelo manualmente
+
+```{r}
+control <- trainControl(method="repeatedcv", number=10, repeats=3, search="grid")
+tunegrid <- expand.grid(.mtry=c(sqrt(ncol(AirlinesTrain))))
+modellist <- list()
+for (ntree in c(100, 150, 200, 250)) {
+	set.seed(seed)
+	fit <- train(TotalDelay~., data=AirlinesTrain, method="rf", metric=metric, tuneGrid=tunegrid, trControl=control, ntree=ntree)
+	key <- toString(ntree)
+	modellist[[key]] <- fit
+}
+
+results <- resamples(modellist)
+summary(results)
+dotplot(results)
+```
+

@@ -1,0 +1,241 @@
+---
+title: "House Prices Case Study"
+output: html_document
+Fuente: https://github.com/topepo
+Objetivo: Desarrollar un modelo analítico para predecir el precio final de las casas en Sacramento, CA
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggmap)
+library(mice)
+library(tidyverse)
+library(caret)
+```
+
+## Carga de Datos
+
+Se trata del dataset `House Prices Case Study`:
+
+```{r titanic}
+data(Sacramento)
+```
+
+En este caso, realizamos la separación de los dataset de train y test antes del análisis exploratorio para poder realizar este análisis de ambos dataset generados
+```{r titanic}
+in_train <- createDataPartition(log(Sacramento$price), p = 0.8, list = FALSE)  # 80% for training
+training <- Sacramento[ in_train,]
+testing <- Sacramento[-in_train,]
+```
+
+
+## Análisis Exploratorio
+
+Analizamos el dataset
+```{r}
+names(Sacramento)
+dim(Sacramento)
+str(Sacramento)
+summary(Sacramento)
+```
+
+Visualizamos el número de registros de los dataset de train y test
+```{r}
+nrow(training)
+nrow(testing)
+```
+
+Otros análisis
+
+Mostrar Prize vs Size
+
+```{r}
+ggplot(training, aes(x=sqft, y=log(price))) + ylab("log price") + 
+  geom_point(alpha=0.6) + ggtitle("Price vs size of living area")
+
+```
+
+Mostrar Prize vs Size, en este caso para x=log(sqft)
+
+```{r}
+ggplot(training, aes(x=log(sqft), y=log(price))) + ylab("log price") + 
+  geom_point(alpha=0.6) + ggtitle("Price vs size of living area")
+
+```
+
+Haz otros tipos de análisis y visualizaciones
+```{r}
+ggplot(training, aes(log(price))) + geom_density(fill="lightblue") + 
+  xlab("log price") +
+  ggtitle("Price distribution")
+
+```
+
+```{r}
+ggplot(training, aes(log(price))) + geom_density(aes(group=type, colour=type, fill=type), alpha=0.1) + 
+  xlab("log price") +
+  ggtitle("Price distribution")
+
+```
+
+```{r}
+ggplot(training, aes(x=factor(beds), y=log(price))) +
+  geom_boxplot(fill="blue") +
+  ggtitle("Price vs beds")
+
+```
+
+```{r}
+ggplot(training, aes(x=factor(baths), y=log(price))) +
+  geom_boxplot(fill="blue") +
+  ggtitle("Price vs baths")
+
+```
+
+```{r}
+ggplot(training, aes(x=type, y=log(price))) +
+  geom_boxplot(fill="blue") +
+  ggtitle("Price vs type")
+
+```
+
+```{r}
+ggplot(training, aes(x=city, y=log(price))) +
+  geom_boxplot(fill="blue") +
+  ggtitle("Price vs city")
+```
+
+```{r}
+ggplot(training, aes(x=zip, y=log(price))) +
+  geom_boxplot(fill="blue") +
+  ggtitle("Price vs zip")
+```
+
+##Preprocesado del dataset
+
+Los missing values son especialmente peligrosos si se encuentran en el dataset de test
+Si tiene algunos NAs en una variables, elimínalos
+Si por el contrario, tienes muchos NAs en una variable, elimina la variable
+Algunas veces, conviene reemplazar estos NAs por la media o la mediana
+Y por supuesto, utiliza el sentido común para aplicar estas normas
+
+En este caso, vamos a realizar ingeniería de variables:
+Revisar como beds, baths y sqft están correlacionadas
+```{r}
+Primer_Modelo_linFit <- lm(log(price) ~ sqft, data=training)
+summary(Primer_Modelo_linFit)
+```
+
+Para las variables beds y baths crear combinaciones
+```{r}
+pairs(cbind(training$sqft,training$beds/training$baths))
+
+training$bedsperbath = training$beds/training$baths
+testing$bedsperbath = testing$beds/testing$baths
+```
+
+##Modelización
+
+Crea un primer modelo, que sea una regresión lineal con la variable sqft. Haz un summary
+```{r}
+Primer_Modelo_linFit <- lm(log(price) ~ sqft, data=training)
+summary(Primer_Modelo_linFit)
+```
+
+Crea un un segundo modelo, que sea una regresión múltiple con la variable beds,baths,sqft,type,latitude,longitude. Haz un summary
+```{r}
+Segundo_Modelo_linFit <- lm(log(price) ~ beds + baths + log(sqft) + type + latitude + longitude, data=training)
+summary(Segundo_Modelo_linFit)
+```
+
+Cada modelo puede ser tuneado y evaluado. En este caso, utiliza 4 repeticiones un cross validation de 5 particiones
+```{r}
+ctrl <- trainControl(method = "repeatedcv", 
+                     number = 5, repeats = 4)
+```
+
+Crear 2 modelos con distintas variables para probar su rendimiento
+```{r}
+ModelS = log(price) ~ beds + baths + log(sqft) + type + latitude + longitude
+ModelF = log(price) ~ bedsperbath + log(sqft) + type + latitude*longitude + I(latitude^2)+ I(longitude^2)
+```
+
+Crear un dataframe con los predictores (prices in logs)
+```{r}
+test_results <- data.frame(price = log(testing$price))
+```
+
+Elabora predicciones, haciendo uso de este último modelo, con la función predict en test
+Analízalo con la métrica RMSE
+```{r}
+predictions <- exp(predict(Segundo_Modelo_linFit, newdata=testing))
+cor(testing$price, predictions)^2
+RMSE <- sqrt(mean((predictions - testing$price)^2))
+RMSE
+```
+
+Crea un tercer modelo denominado knn_tune, con el algoritmo k-vecinos (kknn)
+```{r}
+knn_tune <- train(ModelF, data = training,
+                  method = "kknn",   
+                  preProc=c('scale','center'),
+                  tuneLength = 10,
+                  trControl = ctrl)
+```
+
+```{r}
+plot(knn_tune)
+```
+
+Elabora predicciones, haciendo uso de este último modelo, con la función predict en test 
+```{r}
+test_results$knn <- predict(knn_tune, testing)
+```
+
+```{r}
+postResample(pred = test_results$knn,  obs = test_results$price)
+```
+
+Visualiza el resultado en un gráfico "RF Regression Observed VS Predicted"
+```{r}
+qplot(test_results$knn, test_results$price) + 
+  labs(title="KNN Regression Observed VS Predicted", x="Predicted", y="Observed") +
+  lims(x = c(10, 15), y = c(10, 15)) +
+  geom_abline(intercept = 0, slope = 1, colour = "blue") +
+  theme_bw()
+```
+
+
+Crea un cuarto modelo denominado rf_tune, con el algoritmo Random Forest
+```{r}
+rf_tune <- train(ModelF, data = training,
+                 method = "rf",
+                 #preProc=c('scale','center'),
+                 trControl = ctrl,
+                 #ntree = 20,
+                 tuneGrid = expand.grid(mtry = c(1,2,3,4,5,6,7,8,9)), 
+                 verbose = FALSE)
+```
+
+```{r}
+plot(rf_tune)
+```
+
+Elabora predicciones, haciendo uso de este último modelo, con la función predict en test 
+```{r}
+test_results$rf <- predict(rf_tune, testing)
+```
+
+```{r}
+postResample(pred = test_results$rf,  obs = test_results$price)
+```
+
+Visualiza el resultado en un gráfico "RF Regression Observed VS Predicted"
+```{r}
+qplot(test_results$rf, test_results$price) + 
+  labs(title="RF Regression Observed VS Predicted", x="Predicted", y="Observed") +
+  lims(x = c(10, 15), y = c(10, 15)) +
+  geom_abline(intercept = 0, slope = 1, colour = "blue") +
+  theme_bw()
+```
+

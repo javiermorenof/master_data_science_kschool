@@ -1,0 +1,175 @@
+---
+title: "AirlineDelay"
+output: html_document
+Objetivo: Predecir el retraso en los vuelos
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(MASS)
+library(caret)
+```
+
+
+
+## Carga de Datos
+
+Se trata del dataset: `AirlineDelay`
+
+```{r}
+Airlines <- read.csv("AirlineDelay.csv")
+```
+
+
+Lo primero que tenemos que hacer es convertir la variable objetivo en factor, ya que es una variable numérica y nuestro objetivo es realizar un ejercicio de clasificación:
+
+```{r titanic}
+Airlines$DelayClass = factor(ifelse(Airlines$TotalDelay == 0, "No Delay", ifelse
+                                    (Airlines$TotalDelay >= 30, "Major Delay", "Minor Delay")))
+levels(Airlines$DelayClass)
+```
+
+En este caso, realizamos la separación de los dataset de train y test antes del análisis exploratorio para poder realizar este análisis de ambos dataset generados
+```{r}
+spl = createDataPartition(Airlines$TotalDelay, p = 0.8, list = FALSE)  # 80% for training
+
+AirlinesTrain = Airlines[spl,]
+AirlinesTest = Airlines[-spl,]
+```
+
+
+## Análisis Exploratorio
+
+Analizamos el dataset
+```{r}
+names(AirlinesTrain)
+dim(AirlinesTrain)
+summary(AirlinesTrain)
+```
+
+Analizamos los dataset de train y test
+```{r}
+str(AirlinesTrain)
+str(AirlinesTest)
+```
+
+Otros análisis
+
+Mostrar TotalDelay distribution
+
+```{r}
+ggplot(AirlinesTrain, aes(TotalDelay)) + geom_density(fill="lightblue") + 
+  xlab("TotalDelay") +
+  ggtitle("TotalDelay distribution")
+```
+
+```{r}
+ggplot(AirlinesTrain, aes(log(TotalDelay+10))) + geom_density(fill="lightblue") + 
+  xlab("log(TotalDelay+10)") +
+  ggtitle("TotalDelay distribution")
+```
+
+Mostrar TotalDelay vs HistoricallyLate
+```{r}
+ggplot(AirlinesTrain, aes(x=HistoricallyLate, y=log(TotalDelay+10))) +
+  ylab("TotalDelay") + 
+  geom_point(alpha=0.8) +
+  ggtitle("TotalDelay vs HistoricallyLate")
+```
+
+Otro tipo de visualizaciones
+```{r}
+ggplot(AirlinesTrain, aes(log(TotalDelay+10))) + geom_density(aes(group=Flight, colour=Flight, fill=Flight), alpha=0.1) + 
+  xlab("log(TotalDelay+10)") +
+  ggtitle("TotalDelay distribution")
+```
+
+```{r}
+ggplot(AirlinesTrain, aes(log(TotalDelay+10))) + geom_density(aes(group=Carrier, colour=Carrier, fill=Carrier, alpha=0.1)) + 
+  xlab("log(TotalDelay+10)") +
+  ggtitle("TotalDelay distribution")
+```
+
+```{r}
+ggplot(AirlinesTrain, aes(x=as.factor(NumPrevFlights), y=log(TotalDelay+10))) +
+  geom_boxplot(fill="blue") +
+  ggtitle("TotalDelay vs NumPrevFlights")
+```
+
+Otras visualizaciones, teniendo en cuenta que para variables categóricas es mejor usar boxplots
+```{r}
+featurePlot(x = AirlinesTrain[, c(9:16)],
+            y = log(AirlinesTrain$TotalDelay+10),
+            plot = "scatter",
+            layout = c(4, 2))
+```
+
+```{r}
+featurePlot(x = AirlinesTrain[, c(17:22)],
+            y = log(AirlinesTrain$TotalDelay+10),
+            plot = "scatter",
+            layout = c(2, 3))
+```
+
+¿Qué número de vuelos no tienen retraso, o tienen un retraso menor, y mayor?
+```{r}
+table(AirlinesTrain$DelayClass)
+```
+
+¿Y por ruta?
+```{r}
+table(AirlinesTrain$DelayClass, AirlinesTrain$Flight)
+```
+
+
+##Modelización
+
+Crea un primer modelo, que sea una regresión logística para la variable HistoricallyLate. Haz un summary
+```{r}
+library(VGAM)
+log.fit = vglm(DelayClass ~ HistoricallyLate, family=multinomial(refLevel=1), data=AirlinesTrain)
+summary(log.fit)
+```
+
+```{r}
+confint(log.fit)
+```
+
+Elabora predicciones, haciendo uso de este último modelo, con la función predict en test
+```{r}
+prob.test = predict(log.fit, newdata=AirlinesTest, type="response")
+prob.test
+```
+
+Mostrar la matriz de confusion
+```{r}
+pred.test <- as.factor(levels(Airlines$DelayClass)[max.col(prob.test)])
+pred.test
+confusionMatrix(pred.test, AirlinesTest$DelayClass)
+```
+
+
+```{r}
+ctrl <- trainControl(method = "repeatedcv", 
+                     repeats = 4,
+                     number = 5)
+```
+
+Crea un tercer modelo aplicando cross validation y el modelo Random Forest
+```{r}
+rfFit <- train(DelayClass ~ ., method = "rf", 
+               data = AirlinesTrain,
+               preProcess = c("center", "scale"),
+               trControl = ctrl)
+```
+
+```{r}
+print(rfFit)
+```
+
+```{r}
+rfPred = predict(rfFit, AirlinesTest)
+confusionMatrix(rfPred, AirlinesTest$DelayClass)
+rf_imp <- varImp(rfFit, scale = F)
+```

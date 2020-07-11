@@ -1,0 +1,179 @@
+---
+title: "Ejemplo Titanic"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Carga de Datos
+
+Se trata del dataset: `titanic`
+
+```{r titanic}
+data_path <- 'titanic.csv'
+titanic <- read.csv(data_path, header = T, stringsAsFactors = F, encoding = 'utf-8')
+```
+
+## Análisis Exploratorio
+
+```{r}
+dim(titanic)
+str(titanic)
+summary(titanic)
+```
+
+Imputaremos a la mediana algunos valores faltantes de `Age`:
+
+```{r}
+titanic$Age[is.na(titanic$Age)] <- median(titanic$Age, na.rm = T)
+```
+
+Algunos plots:
+
+```{r}
+library(ggplot2)
+
+ggplot(data = titanic, aes(x = Sex, fill = factor(Survived))) + geom_bar(position = 'fill')
+ggplot(data = titanic, aes(x = Pclass, fill = factor(Survived))) + geom_bar(position = 'fill')
+ggplot(data = titanic, aes(x = Fare, fill = factor(Survived))) + geom_density() + facet_grid(Survived ~ .)
+ggplot(data = titanic, aes(x = Age, fill = factor(Survived))) + geom_density() + facet_grid(Survived ~ .)
+
+```
+
+Extrae algunas conclusiones de las anteriores gráficas o de un análisis exploratorio más detallado, si lo consideras conveniente.
+
+## Preprocesado del Dataset
+
+Consideramos la variable `Survived` como variable objetivo y conviértela a factor:
+
+```{r}
+titanic$Survived <- as.factor(titanic$Survived)
+```
+
+Trataremos `Sex` como factor y `Pclass` como factor ordenado
+
+```{r}
+titanic$Sex <- as.factor(titanic$Sex)
+
+titanic$Pclass <- as.ordered(titanic$Pclass) 
+```
+
+
+## Modelización
+
+Creamos Training y Test, 70% y 30% del dataset titanic, utilizando createDataPartition en la variable Survived. Hemos establecido un valor fijo de la semilla (set.seed = 23) como referencia.
+
+```{r}
+library(caret)
+set.seed(23)
+split <- 0.7
+trainIndex <- createDataPartition(titanic$Survived, p=split, list=FALSE)
+head(trainIndex)
+```
+
+```{r}
+titanic_training <- titanic[trainIndex,]
+titanic_test <- titanic[-trainIndex,]
+```
+
+A partir de ahora solo utilizaremos la partición de training para el ajuste y validación de los modelos.
+
+Ajusta un primer modelo glm de regresión logística con las variables Sex, PClass, Fare y Age haz un summary
+
+```{r, eval =FALSE}
+Primer_modelo <- glm(Survived ~ Sex + Pclass + Fare + Age,
+                   data = titanic_training,
+                   family = binomial(link = 'logit'))
+
+summary(Primer_modelo)
+```
+
+Por simplicidad usaremos factores no ordenados:
+
+```{r}
+titanic$Pclass_unord <- factor(titanic$Pclass, ordered = FALSE)
+
+titanic_training <- titanic[trainIndex,]
+titanic_test <- titanic[-trainIndex,]
+```
+
+Plantea el nuevo modelo con un árbol de decisión.
+Para este primer modelo plantea un dataset más reducido, con la variable `FClass`, que refleja si los pasajeros eran de primera clase, además de las variables Sex y Age.
+
+```{r}
+titanic$Fclass <- titanic$Pclass == '1'
+titanic_training <- titanic[trainIndex,]
+titanic_test <- titanic[-trainIndex,]
+```
+
+```{r}
+library(rpart)
+
+Primer_Arbol_Decision <- rpart(formula = Survived ~ Sex + Age, data = titanic_training)
+
+
+Primer_Arbol_Decision
+```
+
+Plantea un segundo modelo añadiendo algunas variables
+```{r}
+library(rpart)
+Segundo_Arbol_Decision <-rpart(formula = Survived ~ Sex + Age + Fare + Fclass, data = titanic_training)
+
+Segundo_Arbol_Decision
+```
+```{r}
+library(rpart.plot)
+rpart.plot(Segundo_Arbol_Decision)
+
+```
+
+Elabora predicciones, haciendo uso de este último modelo, con la función predict en titanic_test
+
+```{r}
+prediccion_1 <- predict(Segundo_Arbol_Decision, newdata = titanic_test, type = "class")
+
+```
+
+Calcular la matriz de confusión
+```{r}
+library(caret)
+confusionMatrix(prediccion_1, titanic_test[["Survived"]])
+
+```
+Esta es la matriz de confusión. Se considera 1 positivo y 0 negativo.
+
+
+¿Cuál es el accuracy?
+```{r}
+acc <- (138+70)/(138+70+32+26)
+acc
+```
+
+¿Cuál es la tasa de verdaderos positivos (TPR)?
+```{r}
+TPR <-  70/(70+32) 
+TPR
+```
+
+¿Cuál es la Sensibilidad o Hit Rate?
+```{r}
+Sens <- TPR
+Sens
+```
+
+¿Cuál es la tasa de falsos positivos (FPR) o False Alarm?
+```{r}
+FPR <-  26/(138 + 26)
+FPR
+```
+
+¿Cuál es la Especificidad?
+ 
+
+```{r}
+Spec <- 138/(26 + 138)
+Spec
+```

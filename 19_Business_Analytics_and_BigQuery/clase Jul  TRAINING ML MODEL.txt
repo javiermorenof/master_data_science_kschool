@@ -1,0 +1,106 @@
+LOG REG 1 0.85 AUC
+
+CREATE OR REPLACE MODEL `tribal-primer-271809.clase.log_reg_1` 
+OPTIONS(model_type='logistic_reg',
+learn_rate_strategy='constant',
+--learn_rate_strategy='line_search',
+data_split_method= 'random',
+data_split_eval_fraction = 0.2,
+learn_rate= 0.4,
+l1_reg=0.15,
+auto_class_weights = true
+) AS
+SELECT
+  device, 
+  OS,
+  visits,
+  visits_lastday,
+  visits_last2day,
+  visits_last7day,
+  pageviews,
+  pageviews_lastday,
+  pageviews_last2day,
+  pageviews_last7day,
+  pagedepth,
+  pagedepth_lastday,
+  pagedepth_last2day,
+  pagedepth_last7day,
+  avg_SQ,
+  max_SQ,
+  avg_QS_lastday,
+  avg_QS_last2day,
+  avg_QS_last7day,
+  max_QS_lastday,
+  max_QS_last2day,
+  max_QS_last7day,
+  max_timeOnSite,
+  max_timeOnSite_lastday,
+  max_timeOnSite_last2day,
+  max_timeOnSite_last7day,
+  avg_timeOnSite_lastday,
+  avg_timeOnSite_last2day,
+  avg_timeOnSite_last7day,
+  label
+FROM
+
+`tribal-primer-271809.clase.curated_dataset_alltogether` 
+where fecha not in ("2016-09-05", 	
+"2017-01-16",
+"2017-03-27",
+"2017-06-12")
+
+
+LOG REG 2 0.86 AUC 
+
+
+
+CREATE OR REPLACE MODEL `tribal-primer-271809.clase.log_reg_2` 
+OPTIONS(model_type='logistic_reg',
+learn_rate_strategy='constant',
+--learn_rate_strategy='line_search',
+data_split_method= 'random',
+data_split_eval_fraction = 0.2,
+learn_rate= 0.6,
+l1_reg=0.15,
+auto_class_weights = true
+) AS
+SELECT
+ -- device, 
+  concat(device,OS) as device_os,
+  visits,
+  visits_lastday,
+  visits_last2day,
+  visits_last7day,
+  pageviews,
+  pageviews_lastday,
+  pageviews_last2day,
+  pageviews_last7day,
+ -- pagedepth,
+ -- pagedepth_lastday,
+--  pagedepth_last2day,
+  pagedepth_last7day,
+--  avg_SQ,
+  --max_SQ,
+ -- avg_QS_lastday,
+--  avg_QS_last2day,
+--  avg_QS_last7day,
+--  max_QS_lastday,
+--  max_QS_last2day,
+ -- max_QS_last7day,
+  max_timeOnSite,
+  max_timeOnSite_lastday,
+  max_timeOnSite_last2day,
+  max_timeOnSite_last7day,
+  avg_timeOnSite_lastday,
+  avg_timeOnSite_last2day,
+  avg_timeOnSite_last7day,
+  label
+FROM
+
+`tribal-primer-271809.clase.curated_dataset_alltogether` 
+where fecha not in ("2016-09-05", 	
+"2017-01-16",
+"2017-03-27",
+"2017-06-12")
+
+

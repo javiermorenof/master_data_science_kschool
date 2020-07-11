@@ -1,0 +1,59 @@
+select sum(predicted_label) as predicted_label,sum(label) as label,
+sum(if((predicted_label=1 and label =1),label,0)) as aciertos_positivos, 
+sum(if((predicted_label=1 and label =1),label,0))/sum(label) as recall,
+sum(if((predicted_label=1 and label =1),label,0))/sum(predicted_label) as precission,
+sum(if(predicted_label=label,1,0)) as aciertos,
+sum(if(predicted_label=label,1,0)) / count(*) as accuracy,
+sum(label)/count(*) as CR
+
+from (
+
+SELECT
+  clientId,predicted_label,label
+ 
+FROM
+  ml.PREDICT(MODEL  `tribal-primer-271809.clase.log_reg_2` , (
+
+
+SELECT
+clientid,
+ -- device, 
+  concat(device,OS) as device_os,
+  visits,
+  visits_lastday,
+  visits_last2day,
+  visits_last7day,
+  pageviews,
+  pageviews_lastday,
+  pageviews_last2day,
+  pageviews_last7day,
+ -- pagedepth,
+ -- pagedepth_lastday,
+--  pagedepth_last2day,
+  pagedepth_last7day,
+--  avg_SQ,
+  --max_SQ,
+ -- avg_QS_lastday,
+--  avg_QS_last2day,
+--  avg_QS_last7day,
+--  max_QS_lastday,
+--  max_QS_last2day,
+ -- max_QS_last7day,
+  max_timeOnSite,
+  max_timeOnSite_lastday,
+  max_timeOnSite_last2day,
+  max_timeOnSite_last7day,
+  avg_timeOnSite_lastday,
+  avg_timeOnSite_last2day,
+  avg_timeOnSite_last7day,
+  label
+FROM
+
+`tribal-primer-271809.clase.curated_dataset_alltogether` 
+where fecha  in ("2016-09-05", 	
+"2017-01-16",
+"2017-03-27",
+"2017-06-12")
+)
+)
+)
